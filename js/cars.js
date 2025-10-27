@@ -14,6 +14,7 @@ async function loadCars() {
     
     allCars = allCars.map(car => ({
       ...car,
+      id: normalizeCarId(car.id),
       VetelArFormatted: car.purchase_price ? new Intl.NumberFormat('hu-HU').format(car.purchase_price) : '',
       KivantArFormatted: car.desired_price ? new Intl.NumberFormat('hu-HU').format(car.desired_price) : '',
       EladasiArFormatted: car.sale_price ? new Intl.NumberFormat('hu-HU').format(car.sale_price) : '',
@@ -123,7 +124,8 @@ function renderCars(cars) {
       let actionHtml = '';
       if (currentUser) {
         const canDelete = (c.Hozzáadta === currentUser.tagName || currentUser.role === 'admin');
-        let buttonsHtml = `<button class="modern-btn-sold" onclick="openSoldModal(${c.id})">Eladva</button>`;
+        const normalizedId = normalizeCarId(c.id);
+        let buttonsHtml = `<button class="modern-btn-sold" onclick="openSoldModal(${normalizedId})">Eladva</button>`;
 
         if (canDelete) {
           buttonsHtml += `<button class="modern-btn-delete" onclick="deleteCar(${c.id})">❌ Törlés</button>`;
@@ -243,10 +245,12 @@ async function deleteCar(carId) {
       return;
     }
 
+    const normalizedCarId = normalizeCarId(carId);
+
     const { data: car, error: carError } = await supabase
       .from('cars')
       .select('*')
-      .eq('id', carId)
+      .eq('id', normalizedCarId)
       .single();
 
     if (carError || !car) {
@@ -262,7 +266,7 @@ async function deleteCar(carId) {
     const { error } = await supabase
       .from('cars')
       .delete()
-      .eq('id', carId);
+      .eq('id', normalizedCarId);
 
     if (error) {
       showMessage('Hiba történt a törlés során: ' + error.message, 'error');
@@ -278,7 +282,7 @@ async function deleteCar(carId) {
 }
 function openSaleModal(carId) {
   try {
-    const car = allCars.find(c => c.id === carId);
+    const car = allCars.find(c => normalizeCarId(c.id) === normalizeCarId(carId));
     if (!car) {
       console.error("❌ Autó nem található:", carId);
       return;

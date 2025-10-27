@@ -184,10 +184,22 @@ function updateUIForLoginState() {
   if (galleryAdminFunctions) {
     galleryAdminFunctions.style.display = isLoggedIn ? 'block' : 'none';
   }
-  
+
   const galleryActionHeader = document.getElementById('galleryActionHeader');
   if (galleryActionHeader) {
     galleryActionHeader.style.display = isLoggedIn ? 'table-cell' : 'none';
+  }
+
+  if (typeof updateNewsAdminState === 'function') {
+    updateNewsAdminState();
+  }
+
+  if (typeof bindNewsModalEvents === 'function') {
+    bindNewsModalEvents();
+  }
+
+  if (!isAdminUser && typeof closeAddNewsModal === 'function') {
+    closeAddNewsModal({ resetForm: true });
   }
   
   const kivantHeader = document.getElementById('kivantHeader');
