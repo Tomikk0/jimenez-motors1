@@ -68,6 +68,27 @@ function addHalloweenToggle() {
     document.body.appendChild(toggleBtn);
 }
 
+// Halloween theme alkalmazása minden elemre
+function applyHalloweenThemeToAllElements() {
+    if (document.body.classList.contains('halloween-theme')) {
+        const allElements = document.querySelectorAll('*');
+        
+        allElements.forEach(element => {
+            const computedStyle = window.getComputedStyle(element);
+            
+            const bgColor = computedStyle.backgroundColor;
+            if (bgColor && (bgColor.includes('255, 255, 255') || bgColor === 'white' || bgColor === '#ffffff')) {
+                element.style.backgroundColor = 'transparent';
+            }
+            
+            const textColor = computedStyle.color;
+            if (textColor && (textColor.includes('0, 0, 0') || textColor === 'black' || textColor === '#000000')) {
+                element.style.color = '#e2e8f0';
+            }
+        });
+    }
+}
+
 // === CSAK EGY OBSERVER ===
 const halloweenObserver = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
@@ -80,9 +101,9 @@ const halloweenObserver = new MutationObserver(function(mutations) {
             }
         }
         
-        // Új elemek figyelése␊
-        if (mutation.addedNodes.length && document.body.classList.contains('halloween-theme')) {
-            setTimeout(addHalloweenDecorations, 100);
+        // Új elemek figyelése
+        if (mutation.addedNodes.length) {
+            setTimeout(applyHalloweenThemeToAllElements, 100);
         }
     });
 });
@@ -501,5 +522,4 @@ async function loadCarGallery() {
       </tr>
     `;
   }
-
 }
