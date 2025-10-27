@@ -395,6 +395,7 @@ window.onload = async () => {
     
     console.log('📦 Adatok betöltése...');
     await loadAllData();
+    await loadNews();
     console.log('✅ Adatok betöltve');
     
     const targetPage = loadCurrentPage();
@@ -423,6 +424,7 @@ async function refreshAllData() {
     }
     
     await loadAllData();
+    await loadNews();
     
     if (document.getElementById('statisztikaPage').classList.contains('active')) {
       loadStats();

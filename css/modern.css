@@ -1113,6 +1113,29 @@ select:focus {
   text-transform: uppercase;
 }
 
+.marketplace-news-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+  color: rgba(248, 250, 252, 0.6);
+}
+
+.marketplace-news-author {
+  color: rgba(248, 250, 252, 0.55);
+}
+
+.news-card-actions {
+  margin-top: 1.25rem;
+}
+
+.news-delete-btn {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+}
+
 .marketplace-cars,
 .marketplace-admin-card {
   background: linear-gradient(160deg, rgba(12, 14, 22, 0.96) 0%, rgba(17, 19, 28, 0.92) 60%, rgba(35, 17, 23, 0.9) 100%);
