@@ -184,7 +184,8 @@ function openAddNewsModal() {
   }
 
   modal.setAttribute('aria-hidden', 'false');
-  modal.style.display = 'flex';
+  modal.classList.add('open');
+  modal.style.display = '';
   document.body.classList.add('modal-open');
 }
 
@@ -195,6 +196,7 @@ function closeAddNewsModal({ resetForm = true } = {}) {
   }
 
   modal.setAttribute('aria-hidden', 'true');
+  modal.classList.remove('open');
   modal.style.display = 'none';
   document.body.classList.remove('modal-open');
 
