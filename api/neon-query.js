@@ -61,7 +61,7 @@ export default async function handler(req, res) {
     }
 
     const { text, values } = buildSql({ table, action, columns, payload, filters, orders, returning });
-    const rows = await sql.unsafe(text, values);
+    const rows = await sql(text, values);
 
     const { data, error } = formatResult(rows, expect);
     if (error) {
