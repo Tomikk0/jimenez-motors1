@@ -41,25 +41,18 @@
 
   <div class="marketplace-wrapper">
       <div class="marketplace-hero-header">
-        <h2>Aktuális hírek</h2>
-        <p>Friss információk a Jimenez Motors műhelyéből.</p>
+        <div>
+          <h2>Aktuális hírek</h2>
+          <p>Friss információk a Jimenez Motors műhelyéből.</p>
+        </div>
+        <div id="newsAdminActions" class="marketplace-actions" style="display: none;">
+          <button class="marketplace-outline-btn" onclick="loadNews()">🔄 Frissítés</button>
+          <button id="openAddNewsModalBtn" class="marketplace-solid-btn" onclick="openAddNewsModal()">📝 Új hír közzététele</button>
+        </div>
       </div>
-      <div class="marketplace-news-grid">
-        <article class="marketplace-news-card">
-          <h3>Új tuningcsomagok</h3>
-          <p>Stage 3 csomag több modellhez elérhető.</p>
-          <span class="marketplace-news-date">2025.10.20</span>
-        </article>
-        <article class="marketplace-news-card">
-          <h3>Őszi akció</h3>
-          <p>Akár 1 900 000 Ft kedvezmény a készleten lévő modellekre.</p>
-          <span class="marketplace-news-date">2025.10.26</span>
-        </article>
-        <article class="marketplace-news-card">
-          <h3>Új modellek érkeztek</h3>
-          <p>Audi RS e-tron GT tesztvezetésre elérhető.</p>
-          <span class="marketplace-news-date">2025.09.29</span>
-        </article>
+      <div id="newsMessage" class="message"></div>
+      <div id="newsList" class="marketplace-news-grid">
+        <div class="car-card-loading">Hírek betöltése...</div>
       </div>
 
       <div class="marketplace-section-header">
@@ -79,81 +72,121 @@
         🚗 Nincsenek eladó autók
       </div>
 
-    <div id="addCarModal" class="modern-modal" aria-hidden="true">
-      <div class="modern-modal-overlay" onclick="closeAddCarModal()"></div>
-      <div class="modern-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="addCarModalTitle">
-        <div class="marketplace-admin-card modal-card">
-          <div class="modern-modal-header">
-            <div>
-              <h3 id="addCarModalTitle">➕ Új autó hozzáadása</h3>
-              <p>Válaszd ki a modellt, add meg az árakat, majd töltsd fel a járművet a készletbe.</p>
+      <div id="addCarModal" class="modern-modal" aria-hidden="true">
+        <div class="modern-modal-overlay" onclick="closeAddCarModal()"></div>
+        <div class="modern-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="addCarModalTitle">
+          <div class="marketplace-admin-card modal-card">
+            <div class="modern-modal-header">
+              <div>
+                <h3 id="addCarModalTitle">➕ Új autó hozzáadása</h3>
+                <p>Válaszd ki a modellt, add meg az árakat, majd töltsd fel a járművet a készletbe.</p>
+              </div>
+              <button type="button" class="modern-modal-close" onclick="closeAddCarModal()" aria-label="Modal bezárása">✕</button>
             </div>
-            <button type="button" class="modern-modal-close" onclick="closeAddCarModal()" aria-label="Modal bezárása">✕</button>
-          </div>
 
-          <div class="marketplace-admin-body modern-modal-body">
-            <div class="modern-form-row">
-              <div class="modern-form-group">
-                <label for="modelSearch">🔍 Modell</label>
-                <div class="model-search-container modern">
-                  <input type="text" id="modelSearch" class="modern-input" placeholder="Keresés modellek között..."
-                         onfocus="showModelDropdown()" oninput="filterModels()">
-                  <div id="modelDropdown" class="model-dropdown modern"></div>
+            <div class="marketplace-admin-body modern-modal-body">
+              <div class="modern-form-row">
+                <div class="modern-form-group">
+                  <label for="modelSearch">🔍 Modell</label>
+                  <div class="model-search-container modern">
+                    <input type="text" id="modelSearch" class="modern-input" placeholder="Keresés modellek között..."
+                           onfocus="showModelDropdown()" oninput="filterModels()">
+                    <div id="modelDropdown" class="model-dropdown modern"></div>
+                  </div>
+                </div>
+
+                <div class="modern-form-group">
+                  <label for="vetel">💰 Vételiár</label>
+                  <div class="modern-input-container price">
+                    <input type="text" id="vetel" class="modern-input" placeholder="0"
+                           oninput="formatInputPrice(this)">
+                  </div>
+                </div>
+
+                <div class="modern-form-group">
+                  <label for="kivant">🎯 Kívánt minimmum ár</label>
+                  <div class="modern-input-container price">
+                    <input type="text" id="kivant" class="modern-input" placeholder="0"
+                           oninput="formatInputPrice(this)">
+                  </div>
+                </div>
+
+                <div class="modern-form-group">
+                  <label for="eladas">💵 Eladási ár</label>
+                  <div class="modern-input-container price">
+                    <input type="text" id="eladas" class="modern-input" placeholder="0"
+                           oninput="formatInputPrice(this)">
+                  </div>
                 </div>
               </div>
 
-              <div class="modern-form-group">
-                <label for="vetel">💰 Vételiár</label>
-                <div class="modern-input-container price">
-                  <input type="text" id="vetel" class="modern-input" placeholder="0"
-                         oninput="formatInputPrice(this)">
+              <div class="modern-image-section">
+                <h4>📷 Autó képe</h4>
+                <div class="modern-image-upload-container">
+                  <input type="file" id="carImage" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+                  <button type="button" onclick="document.getElementById('carImage').click()" class="modern-image-upload-btn">
+                    📁 Kép kiválasztása
+                  </button>
+                  <span id="imageFileName" class="modern-image-file-name">Nincs kép kiválasztva</span>
                 </div>
+                <div id="imagePreview" class="modern-image-preview"></div>
               </div>
 
-              <div class="modern-form-group">
-                <label for="kivant">🎯 Kívánt minimmum ár</label>
-                <div class="modern-input-container price">
-                  <input type="text" id="kivant" class="modern-input" placeholder="0"
-                         oninput="formatInputPrice(this)">
-                </div>
-              </div>
-
-              <div class="modern-form-group">
-                <label for="eladas">💵 Eladási ár</label>
-                <div class="modern-input-container price">
-                  <input type="text" id="eladas" class="modern-input" placeholder="0"
-                         oninput="formatInputPrice(this)">
-                </div>
+              <div class="modern-form-group tuning-options-group">
+                <label>🔧 Tuning opciók</label>
+                <div id="tuningContainer" class="modern-tuning-container">Betöltés...</div>
               </div>
             </div>
 
-            <div class="modern-image-section">
-              <h4>📷 Autó képe</h4>
-              <div class="modern-image-upload-container">
-                <input type="file" id="carImage" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
-                <button type="button" onclick="document.getElementById('carImage').click()" class="modern-image-upload-btn">
-                  📁 Kép kiválasztása
-                </button>
-                <span id="imageFileName" class="modern-image-file-name">Nincs kép kiválasztva</span>
-              </div>
-              <div id="imagePreview" class="modern-image-preview"></div>
+            <div class="modern-modal-footer marketplace-admin-actions">
+              <button onclick="addCar()" class="modern-btn-primary">➕ Autó hozzáadása</button>
+              <button type="button" onclick="clearInputs()" class="marketplace-clear-btn">🧹 Mezők törlése</button>
             </div>
-
-            <div class="modern-form-group tuning-options-group">
-              <label>🔧 Tuning opciók</label>
-              <div id="tuningContainer" class="modern-tuning-container">Betöltés...</div>
-            </div>
-          </div>
-
-          <div class="modern-modal-footer marketplace-admin-actions">
-            <button onclick="addCar()" class="modern-btn-primary">➕ Autó hozzáadása</button>
-            <button type="button" onclick="clearInputs()" class="marketplace-clear-btn">🧹 Mezők törlése</button>
           </div>
         </div>
       </div>
     </div>
+    <div id="addNewsModal" class="modern-modal" aria-hidden="true">
+      <div class="modern-modal-overlay" onclick="closeAddNewsModal()"></div>
+      <div class="modern-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="addNewsModalTitle">
+        <div class="marketplace-admin-card modal-card">
+          <div class="modern-modal-header">
+            <div>
+              <h3 id="addNewsModalTitle">📝 Új hír közzététele</h3>
+              <p>Oszd meg a legfrissebb információkat a Jimenez Motors csapatával.</p>
+            </div>
+            <button type="button" class="modern-modal-close" onclick="closeAddNewsModal()" aria-label="Modal bezárása">✕</button>
+          </div>
+
+          <form id="newsForm" class="marketplace-admin-body modern-modal-body" onsubmit="submitNewsForm(event)">
+            <div id="newsModalMessage" class="message"></div>
+
+            <div class="modern-form-group">
+              <label for="newsTitle">📰 Cím</label>
+              <input type="text" id="newsTitle" class="modern-input" placeholder="Add meg a hír címét...">
+            </div>
+
+            <div class="modern-form-group">
+              <label for="newsContent">✍️ Tartalom</label>
+              <textarea id="newsContent" class="modern-input" rows="5" placeholder="Írd le a részleteket..."></textarea>
+            </div>
+
+            <div class="modern-form-row">
+              <div class="modern-form-group">
+                <label for="newsDate">📅 Közzététel dátuma</label>
+                <input type="date" id="newsDate" class="modern-input">
+              </div>
+            </div>
+
+            <div class="modern-modal-footer marketplace-admin-actions">
+              <button type="submit" id="saveNewsButton" class="modern-btn-primary">💾 Hír közzététele</button>
+              <button type="button" onclick="closeAddNewsModal()" class="marketplace-clear-btn">Mégse</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 <div id="eladottAutokPage" class="page">
   <nav class="main-nav">
     <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
@@ -1008,6 +1041,7 @@
 <script src="js/config.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/news.js"></script>
 <script src="js/main.js"></script>
 <script src="js/cars.js"></script>
 <script src="js/soldcars.js"></script> <!-- ÚJ FÁJL -->

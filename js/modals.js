@@ -58,28 +58,29 @@ document.addEventListener('keydown', (event) => {
 
 // Eladás modal bezárása
 function closeEditModal() {
-  console.log('🔒 closeEditModal meghívva');
   const modal = document.getElementById('editSaleModal');
   if (modal) {
     modal.style.display = 'none';
-    console.log('✅ Modal elrejtve');
-  } else {
-    console.error('❌ editSaleModal nem található');
+    modal.style.opacity = '';
+    modal.style.visibility = '';
   }
+
+  document.body.style.overflow = 'auto';
   currentCarIdForSale = null;
 }
 
 // Eladás modal megnyitása - JAVÍTOTT VERZIÓ
 function openSoldModal(carId) {
   console.log('🚗 openSoldModal meghívva, carId:', carId);
-  
-  const car = allCars.find(c => c.id === carId);
+
+  const normalizedCarId = normalizeCarId(carId);
+  const car = allCars.find(c => normalizeCarId(c.id) === normalizedCarId);
   if (!car) {
     console.error('❌ Autó nem található:', carId);
     return;
   }
 
-  currentCarIdForSale = carId;
+  currentCarIdForSale = normalizedCarId;
   
   // Modal elem lekérése
   const modal = document.getElementById('editSaleModal');
@@ -144,15 +145,21 @@ function openSoldModal(carId) {
 
 // Profit számoló frissítése - MÓDOSÍTOTT
 function updateProfitCalculator() {
-  const salePriceInput = document.getElementById('editSalePrice').value.replace(/[^\d]/g, '');
-  const salePrice = salePriceInput ? parseInt(salePriceInput) : 0;
-  const saleType = document.querySelector('input[name="saleType"]:checked').value;
-  
-  const car = allCars.find(c => c.id === currentCarIdForSale);
-  const purchasePrice = car.VetelAr || 0;
-  
+  const salePriceField = document.getElementById('editSalePrice');
+  if (!salePriceField) {
+    return;
+  }
+
+  const salePriceInput = salePriceField.value.replace(/[^\d]/g, '');
+  const salePrice = salePriceInput ? parseInt(salePriceInput, 10) : 0;
+  const saleTypeElement = document.querySelector('input[name="saleType"]:checked');
+  const saleType = saleTypeElement ? saleTypeElement.value : 'kp';
+
+  const car = allCars.find(c => normalizeCarId(c.id) === normalizeCarId(currentCarIdForSale));
+  const purchasePrice = car?.VetelAr || 0;
+
   const profitCalc = document.getElementById('profitCalc');
-  
+
   if (salePrice > 0 && purchasePrice > 0) {
     // Adó számítás: normál eladás esetén 7.5% adó
     const taxRate = saleType === 'normal' ? 0.075 : 0;
@@ -163,43 +170,170 @@ function updateProfitCalculator() {
     const profitFormatted = new Intl.NumberFormat('hu-HU').format(Math.abs(profit));
     const profitClass = profit >= 0 ? 'profit-positive' : 'profit-negative';
     
-    document.getElementById('calcPurchase').textContent = new Intl.NumberFormat('hu-HU').format(purchasePrice) + ' $';
-    document.getElementById('calcSale').textContent = new Intl.NumberFormat('hu-HU').format(salePrice) + ' $';
-    
+    const calcPurchase = document.getElementById('calcPurchase');
+    const calcSale = document.getElementById('calcSale');
+    const calcTax = document.getElementById('calcTax');
+    const taxLabel = document.getElementById('taxLabel');
+    const calcNetSale = document.getElementById('calcNetSale');
+    const netSaleLabel = document.getElementById('netSaleLabel');
+    const calcProfit = document.getElementById('calcProfit');
+
+    if (calcPurchase) {
+      calcPurchase.textContent = new Intl.NumberFormat('hu-HU').format(purchasePrice) + ' $';
+    }
+    if (calcSale) {
+      calcSale.textContent = new Intl.NumberFormat('hu-HU').format(salePrice) + ' $';
+    }
+
     // Adó megjelenítése, ha van
     if (taxAmount > 0) {
-      document.getElementById('calcTax').textContent = new Intl.NumberFormat('hu-HU').format(taxAmount) + ' $';
-      document.getElementById('calcTax').style.display = 'block';
-      document.getElementById('taxLabel').style.display = 'block';
-      document.getElementById('calcNetSale').textContent = new Intl.NumberFormat('hu-HU').format(netSalePrice) + ' $';
-      document.getElementById('calcNetSale').style.display = 'block';
-      document.getElementById('netSaleLabel').style.display = 'block';
+      if (calcTax) {
+        calcTax.textContent = new Intl.NumberFormat('hu-HU').format(taxAmount) + ' $';
+        calcTax.style.display = 'block';
+      }
+      if (taxLabel) taxLabel.style.display = 'block';
+      if (calcNetSale) {
+        calcNetSale.textContent = new Intl.NumberFormat('hu-HU').format(netSalePrice) + ' $';
+        calcNetSale.style.display = 'block';
+      }
+      if (netSaleLabel) netSaleLabel.style.display = 'block';
     } else {
-      document.getElementById('calcTax').style.display = 'none';
-      document.getElementById('taxLabel').style.display = 'none';
-      document.getElementById('calcNetSale').style.display = 'none';
-      document.getElementById('netSaleLabel').style.display = 'none';
+      if (calcTax) calcTax.style.display = 'none';
+      if (taxLabel) taxLabel.style.display = 'none';
+      if (calcNetSale) calcNetSale.style.display = 'none';
+      if (netSaleLabel) netSaleLabel.style.display = 'none';
     }
-    
-    document.getElementById('calcProfit').textContent = (profit >= 0 ? '+' : '-') + profitFormatted + ' $';
-    document.getElementById('calcProfit').className = profitClass;
-    
-    profitCalc.style.display = 'block';
+
+    if (calcProfit) {
+      calcProfit.textContent = (profit >= 0 ? '+' : '-') + profitFormatted + ' $';
+      calcProfit.className = profitClass;
+    }
+
+    if (profitCalc) {
+      profitCalc.style.display = 'block';
+    }
   } else {
-    profitCalc.style.display = 'none';
+    if (profitCalc) {
+      profitCalc.style.display = 'none';
+    }
+  }
+}
+
+// Eladás megerősítése és mentése az adatbázisba
+async function confirmSaleWithEdit() {
+  let confirmButton = null;
+  let originalButtonText = '';
+  try {
+    if (!currentUser) {
+      showMessage('Bejelentkezés szükséges az eladáshoz!', 'warning');
+      return;
+    }
+
+    if (!currentCarIdForSale) {
+      showMessage('Nincs kiválasztott autó az eladáshoz!', 'error');
+      return;
+    }
+
+    const salePriceInput = document.getElementById('editSalePrice');
+    if (!salePriceInput) {
+      showMessage('Hiányzik az eladási ár mező!', 'error');
+      return;
+    }
+
+    const salePriceValue = salePriceInput.value.replace(/[^\d]/g, '');
+    if (!salePriceValue) {
+      showMessage('Adj meg egy érvényes eladási árat!', 'warning');
+      salePriceInput.focus();
+      return;
+    }
+
+    const salePrice = parseInt(salePriceValue, 10);
+    if (!salePrice || isNaN(salePrice) || salePrice <= 0) {
+      showMessage('Az eladási ár nem lehet 0!', 'warning');
+      salePriceInput.focus();
+      return;
+    }
+
+    const saleTypeElement = document.querySelector('input[name="saleType"]:checked');
+    const saleType = saleTypeElement ? saleTypeElement.value : 'kp';
+
+    const car = allCars.find(c => normalizeCarId(c.id) === normalizeCarId(currentCarIdForSale));
+    if (!car) {
+      showMessage('A kiválasztott autó nem található!', 'error');
+      return;
+    }
+
+    const saleModal = document.getElementById('editSaleModal');
+    confirmButton = saleModal ? saleModal.querySelector('.btn-confirm-sale') : null;
+    if (confirmButton) {
+      originalButtonText = confirmButton.textContent;
+      confirmButton.disabled = true;
+      confirmButton.textContent = '⏳ Mentés...';
+    }
+
+    const nowIso = new Date().toISOString();
+    const updateData = {
+      sold: true,
+      sale_price: salePrice,
+      sold_by: (currentUser && (currentUser.tagName || currentUser.username)) || null,
+      sold_at: nowIso,
+      updated_at: nowIso,
+      tax_amount: null,
+      net_sale_price: null
+    };
+
+    if (saleType === 'normal') {
+      const taxRate = 0.075;
+      const taxAmount = Math.round(salePrice * taxRate);
+      updateData.tax_amount = taxAmount;
+      updateData.net_sale_price = salePrice - taxAmount;
+    }
+
+    const { error } = await supabase
+      .from('cars')
+      .update(updateData)
+      .eq('id', normalizeCarId(currentCarIdForSale));
+
+    if (error) {
+      console.error('confirmSaleWithEdit hiba:', error);
+      showMessage('Hiba történt az autó eladásának mentésekor: ' + error.message, 'error');
+      return;
+    }
+
+    showMessage('✅ Az autó sikeresen eladva!', 'success');
+
+    closeEditModal();
+
+    await loadCars();
+    if (typeof loadStats === 'function') {
+      loadStats();
+    }
+    if (typeof refreshSoldCars === 'function') {
+      refreshSoldCars();
+    } else if (typeof loadSoldCars === 'function') {
+      loadSoldCars();
+    }
+  } catch (error) {
+    console.error('confirmSaleWithEdit váratlan hiba:', error);
+    showMessage('Váratlan hiba történt az eladás során', 'error');
+  } finally {
+    if (confirmButton) {
+      confirmButton.disabled = false;
+      confirmButton.textContent = originalButtonText || '✅ Autó eladva';
+    }
   }
 }
 
 function openSaleModal(carId) {
   try {
-    const car = allCars.find(c => c.id === carId);
+    const car = allCars.find(c => normalizeCarId(c.id) === normalizeCarId(carId));
     if (!car) {
       console.error("❌ Autó nem található:", carId);
       return;
     }
 
     // Mentjük a jelenleg eladás alatt álló autó ID-ját
-    window.currentCarIdForSale = carId;
+    window.currentCarIdForSale = normalizeCarId(carId);
 
     // Kitöltjük a modalt az adatokkal
     document.getElementById("editCarModel").textContent = car.Model || "Ismeretlen modell";
@@ -225,11 +359,23 @@ function openSaleModal(carId) {
   }
 }
 
-function closeEditModal() {
-  const modal = document.getElementById("editSaleModal");
-  if (modal) modal.style.display = "none";
-  document.body.style.overflow = "auto";
-}
+// A régi openSaleModal/closeEditModal funkciók más részekben is hivatkozhatók,
+// ezért biztosítjuk, hogy a frissített verziók globálisan elérhetők legyenek.
+window.openSoldModal = openSoldModal;
+window.updateProfitCalculator = updateProfitCalculator;
+window.confirmSaleWithEdit = confirmSaleWithEdit;
+window.closeEditModal = closeEditModal;
+
+document.addEventListener('DOMContentLoaded', function() {
+  const saleModal = document.getElementById('editSaleModal');
+  const confirmSaleButton = saleModal ? saleModal.querySelector('.btn-confirm-sale') : null;
+  if (confirmSaleButton && !confirmSaleButton.getAttribute('onclick')) {
+    confirmSaleButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      confirmSaleWithEdit();
+    });
+  }
+});
 
 // === JELSZÓVÁLTOZTATÁS FUNKCIÓK ===
 
@@ -470,7 +616,7 @@ function openEditGalleryPriceModal(carId, currentBasePrice, currentSalePrice) {
   }
 
   // Aktuális autó adatainak betöltése
-  const car = allCars.find(c => c.id === carId) || {};
+  const car = allCars.find(c => normalizeCarId(c.id) === normalizeCarId(carId)) || {};
   
   // Modal tartalom feltöltése
   document.getElementById('editGalleryCarId').value = carId;
@@ -516,10 +662,12 @@ async function saveGalleryPrice() {
     }
 
     // Ellenőrizzük, hogy a felhasználónak joga van módosítani
+    const normalizedCarId = normalizeCarId(carId);
+
     const { data: car, error: carError } = await supabase
       .from('cars')
       .select('*')
-      .eq('id', carId)
+      .eq('id', normalizedCarId)
       .single();
 
     if (carError || !car) {
@@ -548,7 +696,7 @@ async function saveGalleryPrice() {
     const { error } = await supabase
       .from('cars')
       .update(updateData)
-      .eq('id', carId);
+      .eq('id', normalizedCarId);
 
     if (error) {
       showGalleryMessage('Hiba történt az ár módosítása során: ' + error.message, 'error');

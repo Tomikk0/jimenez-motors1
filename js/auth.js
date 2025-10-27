@@ -184,10 +184,14 @@ function updateUIForLoginState() {
   if (galleryAdminFunctions) {
     galleryAdminFunctions.style.display = isLoggedIn ? 'block' : 'none';
   }
-  
+
   const galleryActionHeader = document.getElementById('galleryActionHeader');
   if (galleryActionHeader) {
     galleryActionHeader.style.display = isLoggedIn ? 'table-cell' : 'none';
+  }
+
+  if (typeof updateNewsAdminState === 'function') {
+    updateNewsAdminState();
   }
   
   const kivantHeader = document.getElementById('kivantHeader');
