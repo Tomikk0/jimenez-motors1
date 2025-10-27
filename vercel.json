@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x",
+      "region": "fra1"
+    }
+  },
+  "build": {
+    "env": {
+      "NEON_DATABASE_URL": "@neon_database_url"
+    }
+  }
+}
