@@ -1,4 +1,33 @@
-import { neon } from '@neondatabase/serverless';
+import util from 'node:util';
+
+if (typeof util._extend === 'function') {
+  util._extend = function extend(origin, add) {
+    if (origin === null || (typeof origin !== 'object' && typeof origin !== 'function')) {
+      throw new TypeError('util._extend target must be a non-null object');
+    }
+
+    if (add === null || add === undefined || (typeof add !== 'object' && typeof add !== 'function')) {
+      return origin;
+    }
+
+    return Object.assign(origin, add);
+  };
+}
+
+let neonFactoryPromise = null;
+
+const loadNeonFactory = async () => {
+  if (!neonFactoryPromise) {
+    neonFactoryPromise = import('@neondatabase/serverless')
+      .then(module => module.neon)
+      .catch(error => {
+        neonFactoryPromise = null;
+        throw error;
+      });
+  }
+
+  return neonFactoryPromise;
+};
 
 const resolveConnectionString = () => {
   return (
@@ -11,15 +40,18 @@ const resolveConnectionString = () => {
 };
 
 let cachedSql = null;
+let cachedConnectionString = null;
 
-const getSqlClient = () => {
+const getSqlClient = async () => {
   const connectionString = resolveConnectionString();
   if (!connectionString) {
     return null;
   }
 
-  if (!cachedSql) {
+  if (!cachedSql || cachedConnectionString !== connectionString) {
+    const neon = await loadNeonFactory();
     cachedSql = neon(connectionString);
+    cachedConnectionString = connectionString;
   }
 
   return cachedSql;
@@ -31,7 +63,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const sql = getSqlClient();
+  const sql = await getSqlClient();
 
   if (!sql) {
     res.status(200).json({
