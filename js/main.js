@@ -490,10 +490,12 @@ async function loadCarGallery() {
     
     // Frissítjük az allCars-t a galéria autókkal is
     galleryCars.forEach(galleryCar => {
-      const existingIndex = allCars.findIndex(car => car.id === galleryCar.id);
+      const galleryId = normalizeCarId(galleryCar.id);
+      const existingIndex = allCars.findIndex(car => normalizeCarId(car.id) === galleryId);
       if (existingIndex === -1) {
         allCars.push({
           ...galleryCar,
+          id: galleryId,
           VetelArFormatted: '',
           KivantArFormatted: '',
           EladasiArFormatted: galleryCar.sale_price ? new Intl.NumberFormat('hu-HU').format(galleryCar.sale_price) : '',

@@ -9,6 +9,19 @@ function escapeHtml(unsafe) {
     .replace(/'/g, "&#039;");
 }
 
+function normalizeCarId(value) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? value : parsed;
+}
+
 function formatInputPrice(input) {
   try {
     const value = input.value.replace(/[^\d]/g, '');

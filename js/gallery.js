@@ -266,10 +266,12 @@ async function saveGalleryPrice() {
     }
 
     // Ellenőrizzük, hogy a felhasználónak joga van módosítani
+    const normalizedCarId = normalizeCarId(carId);
+
     const { data: car, error: carError } = await supabase
       .from('cars')
       .select('*')
-      .eq('id', carId)
+      .eq('id', normalizedCarId)
       .single();
 
     if (carError || !car) {
@@ -285,11 +287,11 @@ async function saveGalleryPrice() {
     // Ár frissítése
     const { error } = await supabase
       .from('cars')
-      .update({ 
+      .update({
         sale_price: priceValue,
         updated_at: new Date().toISOString()
       })
-      .eq('id', carId);
+      .eq('id', normalizedCarId);
 
     if (error) {
       showGalleryMessage('Hiba történt az ár módosítása során: ' + error.message, 'error');
@@ -312,10 +314,12 @@ async function deleteGalleryCar(carId) {
       return;
     }
 
+    const normalizedCarId = normalizeCarId(carId);
+
     const { data: car, error: carError } = await supabase
       .from('cars')
       .select('*')
-      .eq('id', carId)
+      .eq('id', normalizedCarId)
       .single();
 
     if (carError || !car) {
@@ -331,7 +335,7 @@ async function deleteGalleryCar(carId) {
     const { error } = await supabase
       .from('cars')
       .delete()
-      .eq('id', carId);
+      .eq('id', normalizedCarId);
 
     if (error) {
       showGalleryMessage('Hiba történt a törlés során: ' + error.message, 'error');
