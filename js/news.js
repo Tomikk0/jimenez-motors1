@@ -167,7 +167,8 @@ function isMissingPublishedAtError(error) {
 }
 
 function openAddNewsModal() {
-  if (!checkAdminAccess()) {
+  if (!isAdmin()) {
+    showNewsMessage('🔒 Nincs jogosultságod hírt közzétenni.', 'error');
     return;
   }
 

@@ -193,6 +193,10 @@ function updateUIForLoginState() {
   if (typeof updateNewsAdminState === 'function') {
     updateNewsAdminState();
   }
+
+  if (!isAdminUser && typeof closeAddNewsModal === 'function') {
+    closeAddNewsModal({ resetForm: true });
+  }
   
   const kivantHeader = document.getElementById('kivantHeader');
   const actionHeader = document.getElementById('actionHeader');
