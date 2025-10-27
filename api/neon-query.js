@@ -1,16 +1,20 @@
 import { neon } from '@neondatabase/serverless';
 
-const resolveConnectionString = () => {
-  return (
-    process.env.NEON_DATABASE_URL ||
-    process.env.DATABASE_URL ||
-    process.env.POSTGRES_URL ||
-    process.env.POSTGRES_PRISMA_URL ||
-    null
-  );
-};
+let sqlClient = globalThis.__neonSqlClient || null;
 
-let cachedSql = null;
+function getSqlClient() {
+  if (!sqlClient) {
+    const cs = process.env.NEON_DATABASE_URL 
+             || process.env.DATABASE_URL 
+             || process.env.POSTGRES_URL 
+             || process.env.POSTGRES_PRISMA_URL;
+    if (!cs) throw new Error('Missing database connection string');
+    sqlClient = neon(cs);
+    globalThis.__neonSqlClient = sqlClient;
+  }
+  return sqlClient;
+}
+
 
 const getSqlClient = () => {
   const connectionString = resolveConnectionString();
