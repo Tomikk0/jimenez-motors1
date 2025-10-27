@@ -194,6 +194,10 @@ function updateUIForLoginState() {
     updateNewsAdminState();
   }
 
+  if (typeof bindNewsModalEvents === 'function') {
+    bindNewsModalEvents();
+  }
+
   if (!isAdminUser && typeof closeAddNewsModal === 'function') {
     closeAddNewsModal({ resetForm: true });
   }
