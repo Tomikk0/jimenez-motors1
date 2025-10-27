@@ -1,8 +1,7 @@
 {
   "functions": {
     "api/**/*.js": {
-      "runtime": "nodejs20.x",
-      "region": "fra1"
+      "runtime": "nodejs20.x"
     }
   },
   "build": {
