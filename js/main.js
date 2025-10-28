@@ -172,14 +172,14 @@ function updateActiveNavIdentifier() {
 let drawerFooterObserver;
 let drawerFooterAnimationFrame;
 
-function applyDrawerFooterOffset(amount) {
+function applyDrawerFooterLift(amount) {
   const root = document.documentElement;
   if (!root) {
     return;
   }
 
   const safeAmount = Math.max(0, Math.round(amount));
-  root.style.setProperty('--drawer-footer-offset', `${safeAmount}px`);
+  root.style.setProperty('--drawer-footer-lift', `${safeAmount}px`);
 }
 
 function initializeDrawerFooterObserver() {
@@ -200,12 +200,12 @@ function initializeDrawerFooterObserver() {
     }
 
     if (typeof requestAnimationFrame === 'undefined') {
-      applyDrawerFooterOffset(offset);
+      applyDrawerFooterLift(offset);
       return;
     }
 
     drawerFooterAnimationFrame = requestAnimationFrame(() => {
-      applyDrawerFooterOffset(offset);
+      applyDrawerFooterLift(offset);
       drawerFooterAnimationFrame = null;
     });
   };
@@ -223,7 +223,7 @@ function initializeDrawerFooterObserver() {
   const rect = footer.getBoundingClientRect();
   const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
   const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
-  applyDrawerFooterOffset(visibleHeight > 0 ? visibleHeight : 0);
+  applyDrawerFooterLift(visibleHeight > 0 ? visibleHeight : 0);
 
   drawerFooterObserver.observe(footer);
 
@@ -235,7 +235,7 @@ function initializeDrawerFooterObserver() {
     const resizeRect = footer.getBoundingClientRect();
     const resizeViewportHeight = window.innerHeight || document.documentElement.clientHeight;
     const resizeVisibleHeight = Math.min(resizeRect.bottom, resizeViewportHeight) - Math.max(resizeRect.top, 0);
-    applyDrawerFooterOffset(resizeVisibleHeight > 0 ? resizeVisibleHeight : 0);
+    applyDrawerFooterLift(resizeVisibleHeight > 0 ? resizeVisibleHeight : 0);
   }, { passive: true });
 }
 

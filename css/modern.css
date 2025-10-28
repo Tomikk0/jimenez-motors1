@@ -17,7 +17,7 @@
   --ui-warning: #fbbf24;
   --drawer-safe-top: calc(clamp(16px, 4vh, 32px) + env(safe-area-inset-top));
   --drawer-safe-bottom: calc(clamp(96px, 16vh, 176px) + env(safe-area-inset-bottom));
-  --drawer-footer-offset: 0px;
+  --drawer-footer-lift: 0px;
 }
 
 @supports not (top: env(safe-area-inset-top)) {
@@ -211,7 +211,7 @@ body.menu-open .menu-overlay {
 .main-nav {
   position: fixed;
   top: var(--drawer-safe-top);
-  bottom: calc(var(--drawer-safe-bottom) + var(--drawer-footer-offset));
+  bottom: var(--drawer-safe-bottom);
   left: 0;
   width: min(320px, 85vw);
   background: linear-gradient(135deg, rgba(16, 18, 28, 0.95) 0%, rgba(12, 14, 22, 0.9) 100%);
@@ -223,8 +223,8 @@ body.menu-open .menu-overlay {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  transform: translateX(-110%);
-  transition: transform 0.35s ease, bottom 0.3s ease;
+  transform: translate3d(-110%, calc(var(--drawer-footer-lift, 0px) * -1), 0);
+  transition: transform 0.35s ease;
   z-index: 1400;
   overflow-y: auto;
   pointer-events: none;
@@ -232,11 +232,11 @@ body.menu-open .menu-overlay {
 }
 
 .page.active .main-nav {
-  transform: translateX(-110%);
+  transform: translate3d(-110%, calc(var(--drawer-footer-lift, 0px) * -1), 0);
 }
 
 body.menu-open .page.active .main-nav {
-  transform: translateX(0);
+  transform: translate3d(0, calc(var(--drawer-footer-lift, 0px) * -1), 0);
   pointer-events: auto;
 }
 
