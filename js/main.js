@@ -120,7 +120,7 @@ halloweenObserver.observe(document.body, {
 document.addEventListener('DOMContentLoaded', function() {
     addHalloweenToggle();
     loadHalloweenTheme();
-    
+
     // Dekorációk késleltetett hozzáadása
     setTimeout(() => {
         if (document.body.classList.contains('halloween-theme')) {
@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Theme alkalmazása oldal betöltésekor és minden DOM változásnál
 document.addEventListener('DOMContentLoaded', applyHalloweenThemeToAllElements);
+document.addEventListener('DOMContentLoaded', initMainNavToggles);
 
 // MutationObserver a dinamikus elemekhez
 const observer = new MutationObserver(function(mutations) {
@@ -147,6 +148,22 @@ observer.observe(document.body, {
     subtree: true
 });
 // === OLDAL KEZELÉS ===
+function initMainNavToggles() {
+  const toggles = document.querySelectorAll('.main-nav-toggle');
+
+  toggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const page = toggle.closest('.page');
+      if (!page) {
+        return;
+      }
+
+      const isCollapsed = page.classList.toggle('nav-collapsed');
+      toggle.setAttribute('aria-expanded', (!isCollapsed).toString());
+    });
+  });
+}
+
 function showPage(pageName) {
   try {
     console.log('🔄 Oldalváltás:', pageName);
