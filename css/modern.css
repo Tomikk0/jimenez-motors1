@@ -45,6 +45,23 @@ body {
   display: flex;
   flex-direction: column;
   gap: clamp(24px, 3vw, 42px);
+  position: relative;
+}
+
+.page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 12, 0.65);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 8;
+}
+
+.page:not(.nav-collapsed)::before {
+  opacity: 1;
 }
 
 @media (min-width: 1024px) {
@@ -54,7 +71,7 @@ body {
 
   .page > .main-nav-panel {
     position: fixed;
-    top: clamp(12px, 4vh, 48px);
+    top: clamp(10px, 3vh, 36px);
     left: clamp(18px, 4vw, 72px);
     z-index: 24;
   }
@@ -176,9 +193,13 @@ body::after {
   flex-direction: column;
   gap: 14px;
   position: sticky;
-  top: clamp(10px, 3vw, 26px);
+  top: clamp(8px, 2.5vh, 24px);
   align-self: flex-start;
   z-index: 12;
+}
+
+.page:not(.nav-collapsed) > :not(.main-nav-panel) {
+  pointer-events: none;
 }
 
 .main-nav-toggle {
