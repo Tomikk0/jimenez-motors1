@@ -146,6 +146,158 @@ observer.observe(document.body, {
     childList: true,
     subtree: true
 });
+
+// === OLDALSÓ MENÜ KEZELÉS ===
+function updateActiveNavIdentifier() {
+  const navs = document.querySelectorAll('.page .main-nav');
+
+  navs.forEach(nav => {
+    if (nav.id === 'siteNavigationDrawer') {
+      nav.removeAttribute('id');
+      nav.removeAttribute('aria-hidden');
+    }
+  });
+
+  const activePage = document.querySelector('.page.active');
+  if (activePage) {
+    const activeNav = activePage.querySelector('.main-nav');
+    if (activeNav) {
+      activeNav.id = 'siteNavigationDrawer';
+      activeNav.setAttribute('aria-hidden', document.body.classList.contains('menu-open') ? 'false' : 'true');
+    }
+  }
+}
+
+// FIGYELI A LÁBLÉCET, HOGY A MENÜ NE TAKARJA KI
+let drawerFooterObserver;
+let drawerFooterAnimationFrame;
+
+function applyDrawerFooterLift(amount) {
+  const root = document.documentElement;
+  if (!root) {
+    return;
+  }
+
+  const safeAmount = Math.max(0, Math.round(amount));
+  root.style.setProperty('--drawer-footer-lift', `${safeAmount}px`);
+}
+
+function initializeDrawerFooterObserver() {
+  if (drawerFooterObserver || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+    return;
+  }
+
+  const footer = document.getElementById('siteFooter');
+  if (!footer) {
+    return;
+  }
+
+  const processEntry = entry => {
+    const offset = entry.isIntersecting ? entry.intersectionRect.height : 0;
+
+    if (drawerFooterAnimationFrame) {
+      cancelAnimationFrame(drawerFooterAnimationFrame);
+    }
+
+    if (typeof requestAnimationFrame === 'undefined') {
+      applyDrawerFooterLift(offset);
+      return;
+    }
+
+    drawerFooterAnimationFrame = requestAnimationFrame(() => {
+      applyDrawerFooterLift(offset);
+      drawerFooterAnimationFrame = null;
+    });
+  };
+
+  drawerFooterObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.target === footer) {
+        processEntry(entry);
+      }
+    });
+  }, {
+    threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
+  });
+
+  const rect = footer.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
+  applyDrawerFooterLift(visibleHeight > 0 ? visibleHeight : 0);
+
+  drawerFooterObserver.observe(footer);
+
+  window.addEventListener('resize', () => {
+    if (!drawerFooterObserver) {
+      return;
+    }
+
+    const resizeRect = footer.getBoundingClientRect();
+    const resizeViewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const resizeVisibleHeight = Math.min(resizeRect.bottom, resizeViewportHeight) - Math.max(resizeRect.top, 0);
+    applyDrawerFooterLift(resizeVisibleHeight > 0 ? resizeVisibleHeight : 0);
+  }, { passive: true });
+}
+
+function toggleMenu(force) {
+  const body = document.body;
+  const toggleBtn = document.querySelector('.menu-toggle');
+  const currentState = body.classList.contains('menu-open');
+  const shouldOpen = typeof force === 'boolean' ? force : !currentState;
+
+  body.classList.toggle('menu-open', shouldOpen);
+
+  if (toggleBtn) {
+    toggleBtn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    toggleBtn.setAttribute('aria-label', shouldOpen ? 'Menü bezárása' : 'Menü megnyitása');
+    toggleBtn.textContent = shouldOpen ? '✕ Bezárás' : '☰ Menü';
+    toggleBtn.classList.toggle('is-open', shouldOpen);
+  }
+
+  const activeNav = document.getElementById('siteNavigationDrawer');
+  if (activeNav) {
+    activeNav.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+  }
+
+  updateActiveNavIdentifier();
+}
+
+function initializeSideMenu() {
+  const navs = document.querySelectorAll('.main-nav');
+
+  navs.forEach(nav => {
+    if (!nav.querySelector('.menu-header')) {
+      const header = document.createElement('div');
+      header.className = 'menu-header';
+
+      const title = document.createElement('span');
+      title.className = 'menu-title';
+      title.textContent = 'Jimenez Menü';
+
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'menu-close';
+      closeBtn.setAttribute('aria-label', 'Menü bezárása');
+      closeBtn.textContent = '✕';
+      closeBtn.addEventListener('click', () => toggleMenu(false));
+
+      header.appendChild(title);
+      header.appendChild(closeBtn);
+      nav.prepend(header);
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && document.body.classList.contains('menu-open')) {
+      toggleMenu(false);
+    }
+  });
+
+  updateActiveNavIdentifier();
+  initializeDrawerFooterObserver();
+}
+
+document.addEventListener('DOMContentLoaded', initializeSideMenu);
 // === OLDAL KEZELÉS ===
 function showPage(pageName) {
   try {
@@ -181,17 +333,23 @@ function showPage(pageName) {
     if (targetPage) {
       targetPage.classList.add('active');
       console.log('✅ Oldal megjelenítve:', pageName + 'Page');
-      
+
       // Aktuális oldal mentése localStorage-ba
       saveCurrentPage(pageName);
-      
+
       // Aktív gomb beállítása - MINDEN NAV-BAN
       const allActiveButtons = document.querySelectorAll(`.nav-btn[onclick="showPage('${pageName}')"]`);
       allActiveButtons.forEach(btn => {
         btn.classList.add('active');
       });
+
+      // Az újonnan aktív oldalhoz igazítjuk a menüazonosítót
+      updateActiveNavIdentifier();
     }
-    
+
+    // Oldalsó menü bezárása és azonosító frissítése
+    toggleMenu(false);
+
     switch(pageName) {
       case 'autok':
         console.log('🚗 Autók betöltése...');

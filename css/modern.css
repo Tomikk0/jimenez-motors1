@@ -15,6 +15,16 @@
   --ui-success: #22c55e;
   --ui-error: #ef4444;
   --ui-warning: #fbbf24;
+  --drawer-safe-top: calc(clamp(16px, 4vh, 32px) + env(safe-area-inset-top));
+  --drawer-safe-bottom: calc(clamp(96px, 16vh, 176px) + env(safe-area-inset-bottom));
+  --drawer-footer-lift: 0px;
+}
+
+@supports not (top: env(safe-area-inset-top)) {
+  :root {
+    --drawer-safe-top: clamp(16px, 4vh, 32px);
+    --drawer-safe-bottom: clamp(96px, 16vh, 176px);
+  }
 }
 body {
   background-color: #040509;
@@ -148,18 +158,117 @@ body::after {
 }
 
 /* Navigation */
+.menu-toggle {
+  position: fixed;
+  top: 22px;
+  left: 22px;
+  z-index: 1500;
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--ui-text);
+  border: 1px solid rgba(240, 43, 68, 0.35);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 14px 30px rgba(4, 6, 12, 0.45);
+}
+
+.menu-toggle:hover,
+.menu-toggle:focus-visible {
+  border-color: rgba(240, 43, 68, 0.6);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.menu-toggle.is-open {
+  background: linear-gradient(135deg, var(--ui-accent) 0%, var(--ui-accent-strong) 100%);
+  color: var(--ui-accent-contrast);
+  border-color: transparent;
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1200;
+}
+
+body.menu-open .menu-overlay {
+  opacity: 1;
+}
+
+@media (min-width: 900px) {
+  .menu-overlay {
+    display: none;
+  }
+}
+
 .main-nav {
-  background: linear-gradient(135deg, rgba(16, 18, 28, 0.92) 0%, rgba(12, 14, 22, 0.9) 100%);
+  position: fixed;
+  top: var(--drawer-safe-top);
+  bottom: var(--drawer-safe-bottom);
+  left: 0;
+  width: min(320px, 85vw);
+  background: linear-gradient(135deg, rgba(16, 18, 28, 0.95) 0%, rgba(12, 14, 22, 0.9) 100%);
   backdrop-filter: blur(18px);
-  border-radius: 22px;
-  padding: 14px;
-  border: 1px solid rgba(240, 43, 68, 0.16);
+  border-radius: 24px;
+  padding: 28px 22px clamp(34px, 5vh, 48px);
+  border-right: 1px solid rgba(240, 43, 68, 0.16);
   box-shadow: 0 28px 55px rgba(4, 6, 12, 0.65);
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 30px;
+  flex-direction: column;
+  gap: 14px;
+  transform: translate3d(-110%, calc(var(--drawer-footer-lift, 0px) * -1), 0);
+  transition: transform 0.35s ease;
+  z-index: 1400;
+  overflow-y: auto;
+  pointer-events: none;
+  scrollbar-gutter: stable;
+}
+
+.page.active .main-nav {
+  transform: translate3d(-110%, calc(var(--drawer-footer-lift, 0px) * -1), 0);
+}
+
+body.menu-open .page.active .main-nav {
+  transform: translate3d(0, calc(var(--drawer-footer-lift, 0px) * -1), 0);
+  pointer-events: auto;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.menu-title {
+  color: var(--ui-text);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.menu-close {
+  background: rgba(240, 43, 68, 0.12);
+  color: var(--ui-text);
+  border: 1px solid rgba(240, 43, 68, 0.35);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.menu-close:hover,
+.menu-close:focus-visible {
+  background: rgba(240, 43, 68, 0.22);
+  outline: none;
 }
 
 .nav-btn {
@@ -167,12 +276,17 @@ body::after {
   color: var(--ui-text-muted);
   border: 1px solid rgba(240, 43, 68, 0.12);
   border-radius: 14px;
-  padding: 12px 20px;
+  padding: 14px 18px;
   font-weight: 600;
   letter-spacing: 0.04em;
   transition: all 0.25s ease;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .nav-btn::after {
@@ -182,6 +296,20 @@ body::after {
   background: rgba(240, 43, 68, 0.18);
   opacity: 0;
   transition: opacity 0.25s ease;
+}
+
+@media (max-width: 600px) {
+  .menu-toggle {
+    top: 14px;
+    left: 14px;
+    padding: 8px 14px;
+    font-size: 0.95rem;
+  }
+
+  .main-nav {
+    width: min(280px, 90vw);
+    padding: 24px 18px clamp(32px, 7vh, 44px);
+  }
 }
 
 .nav-btn:hover,
