@@ -135,6 +135,44 @@ document.addEventListener('DOMContentLoaded', applyHalloweenThemeToAllElements);
 document.addEventListener('DOMContentLoaded', initMainNavToggles);
 
 let navOutsideHandlerBound = false;
+let navOverlayElement = null;
+
+function ensureNavOverlay() {
+  if (!document.body) {
+    return null;
+  }
+
+  if (!navOverlayElement) {
+    navOverlayElement = document.createElement('div');
+    navOverlayElement.className = 'main-nav-overlay';
+    navOverlayElement.setAttribute('aria-hidden', 'true');
+    navOverlayElement.addEventListener('click', () => {
+      collapseAllNavPanels();
+    });
+    document.body.appendChild(navOverlayElement);
+  }
+
+  return navOverlayElement;
+}
+
+function syncNavOverlayState() {
+  const overlay = ensureNavOverlay();
+  if (!overlay) {
+    return;
+  }
+
+  const anyOpen = Array.from(document.querySelectorAll('.page')).some(
+    page => !page.classList.contains('nav-collapsed')
+  );
+
+  if (anyOpen) {
+    document.body.classList.add('nav-open');
+    overlay.setAttribute('aria-hidden', 'false');
+  } else {
+    document.body.classList.remove('nav-open');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+}
 
 function setPageNavState(page, collapsed) {
   if (!page) {
@@ -156,6 +194,8 @@ function setPageNavState(page, collapsed) {
   if (nav) {
     nav.setAttribute('aria-hidden', collapsed ? 'true' : 'false');
   }
+
+  syncNavOverlayState();
 }
 
 function collapseAllNavPanels() {
@@ -194,6 +234,8 @@ observer.observe(document.body, {
 });
 // === OLDAL KEZELÉS ===
 function initMainNavToggles() {
+  ensureNavOverlay();
+
   const pages = document.querySelectorAll('.page');
 
   pages.forEach(page => {

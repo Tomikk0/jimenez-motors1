@@ -48,8 +48,7 @@ body {
   position: relative;
 }
 
-.page::before {
-  content: '';
+.main-nav-overlay {
   position: fixed;
   inset: 0;
   background: rgba(4, 6, 12, 0.65);
@@ -57,11 +56,16 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-  z-index: 8;
+  z-index: 10;
 }
 
-.page:not(.nav-collapsed)::before {
+body.nav-open .main-nav-overlay {
   opacity: 1;
+  pointer-events: auto;
+}
+
+body.nav-open {
+  overflow: hidden;
 }
 
 @media (min-width: 1024px) {
@@ -196,10 +200,6 @@ body::after {
   top: clamp(8px, 2.5vh, 24px);
   align-self: flex-start;
   z-index: 12;
-}
-
-.page:not(.nav-collapsed) > :not(.main-nav-panel) {
-  pointer-events: none;
 }
 
 .main-nav-toggle {
