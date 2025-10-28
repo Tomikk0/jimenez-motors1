@@ -25,17 +25,23 @@
 </div>
 
 <!-- AUTÓK OLDAL -->
-<div id="autokPage" class="page active">
-  <nav class="main-nav">
-    <button class="nav-btn active" onclick="showPage('autok')">🚗 Autók</button>
-    <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
-    <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
-    <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
-    <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
-    <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
-    <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
-    <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
-  </nav>
+<div id="autokPage" class="page active nav-collapsed">
+  <aside class="main-nav-panel">
+    <button class="main-nav-toggle" type="button" aria-expanded="false" aria-controls="autokMainNav">
+      <span class="toggle-icon">☰</span>
+      <span class="toggle-label">Menü</span>
+    </button>
+    <nav id="autokMainNav" class="main-nav">
+      <button class="nav-btn active" onclick="showPage('autok')">🚗 Autók</button>
+      <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
+      <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
+      <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
+      <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
+      <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
+      <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
+      <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
+    </nav>
+  </aside>
 
   <div id="message" class="message"></div>
 
@@ -187,17 +193,23 @@
       </div>
     </div>
   </div>
-<div id="eladottAutokPage" class="page">
-  <nav class="main-nav">
-    <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
-    <button class="nav-btn active" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
-    <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
-    <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
-    <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
-    <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
-    <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
-    <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
-  </nav>
+<div id="eladottAutokPage" class="page nav-collapsed">
+  <aside class="main-nav-panel">
+    <button class="main-nav-toggle" type="button" aria-expanded="false" aria-controls="eladottMainNav">
+      <span class="toggle-icon">☰</span>
+      <span class="toggle-label">Menü</span>
+    </button>
+    <nav id="eladottMainNav" class="main-nav">
+      <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
+      <button class="nav-btn active" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
+      <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
+      <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
+      <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
+      <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
+      <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
+      <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
+    </nav>
+  </aside>
 
     <div class="modern-form-card">
       <div class="modern-form-header">
@@ -231,17 +243,23 @@
 </div>
 </div>
 <!-- TAGOK OLDAL -->
-<div id="tagokPage" class="page">
-  <nav class="main-nav">
-    <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
-    <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
-    <button class="nav-btn active" onclick="showPage('tagok')">👥 Tagok</button>
-    <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
-    <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
-    <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
-    <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
-    <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
-  </nav>
+<div id="tagokPage" class="page nav-collapsed">
+  <aside class="main-nav-panel">
+    <button class="main-nav-toggle" type="button" aria-expanded="false" aria-controls="tagokMainNav">
+      <span class="toggle-icon">☰</span>
+      <span class="toggle-label">Menü</span>
+    </button>
+    <nav id="tagokMainNav" class="main-nav">
+      <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
+      <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
+      <button class="nav-btn active" onclick="showPage('tagok')">👥 Tagok</button>
+      <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
+      <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
+      <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
+      <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
+      <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
+    </nav>
+  </aside>
     <div class="modern-form-card">
       <div class="modern-form-header">
               <h3>👥 Tagok</h3>
@@ -525,17 +543,23 @@
 </div>
 
 <!-- TUNINGOK OLDAL -->
-<div id="tuningokPage" class="page">
-  <nav class="main-nav">
-    <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
-    <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
-    <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
-    <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
-    <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
-    <button class="nav-btn active" onclick="showPage('tuningok')">🔧 Tuningok</button>
-    <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
-    <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
-  </nav>
+<div id="tuningokPage" class="page nav-collapsed">
+  <aside class="main-nav-panel">
+    <button class="main-nav-toggle" type="button" aria-expanded="false" aria-controls="tuningMainNav">
+      <span class="toggle-icon">☰</span>
+      <span class="toggle-label">Menü</span>
+    </button>
+    <nav id="tuningMainNav" class="main-nav">
+      <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
+      <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
+      <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
+      <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
+      <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
+      <button class="nav-btn active" onclick="showPage('tuningok')">🔧 Tuningok</button>
+      <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
+      <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
+    </nav>
+  </aside>
 
   <div class="form-header-with-filters">
     <div class="form-title">
@@ -640,17 +664,23 @@
 </div>
 
 <!-- STATISZTIKA OLDAL -->
-<div id="statisztikaPage" class="page">
-  <nav class="main-nav">
-    <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
-    <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
-    <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
-    <button class="nav-btn active" onclick="showPage('statisztika')">📊 Statisztika</button>
-    <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
-    <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
-    <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
-    <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
-  </nav>
+<div id="statisztikaPage" class="page nav-collapsed">
+  <aside class="main-nav-panel">
+    <button class="main-nav-toggle" type="button" aria-expanded="false" aria-controls="statisztikaMainNav">
+      <span class="toggle-icon">☰</span>
+      <span class="toggle-label">Menü</span>
+    </button>
+    <nav id="statisztikaMainNav" class="main-nav">
+      <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
+      <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
+      <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
+      <button class="nav-btn active" onclick="showPage('statisztika')">📊 Statisztika</button>
+      <button class="nav-btn" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
+      <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
+      <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
+      <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
+    </nav>
+  </aside>
 
   <h2>📊 Statisztikák</h2>
   <div class="stats-container">
@@ -678,17 +708,23 @@
 </div>
 
 <!-- Autó árak OLDAL -->
-<div id="autokKepekPage" class="page">
-  <nav class="main-nav">
-    <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
-    <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
-    <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
-    <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
-    <button class="nav-btn active" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
-    <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
-    <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
-    <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
-  </nav>
+<div id="autokKepekPage" class="page nav-collapsed">
+  <aside class="main-nav-panel">
+    <button class="main-nav-toggle" type="button" aria-expanded="false" aria-controls="autokKepekMainNav">
+      <span class="toggle-icon">☰</span>
+      <span class="toggle-label">Menü</span>
+    </button>
+    <nav id="autokKepekMainNav" class="main-nav">
+      <button class="nav-btn" onclick="showPage('autok')">🚗 Autók</button>
+      <button class="nav-btn" onclick="showPage('eladottAutok')">✅ Eladott autók</button>
+      <button class="nav-btn" onclick="showPage('tagok')">👥 Tagok</button>
+      <button class="nav-btn" onclick="showPage('statisztika')">📊 Statisztika</button>
+      <button class="nav-btn active" onclick="showPage('autokKepek')">🖼️ Autó árak</button>
+      <button class="nav-btn" onclick="showPage('tuningok')">🔧 Tuningok</button>
+      <button class="nav-btn password-btn" onclick="openChangePasswordModal()" style="display: none;">🔐 Jelszó</button>
+      <button class="nav-btn login-btn" onclick="showPage('login')">🔐 Bejelentkezés</button>
+    </nav>
+  </aside>
 
   <div class="form-header-with-filters">
     <div class="form-title">

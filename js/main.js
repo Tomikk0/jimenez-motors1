@@ -120,7 +120,7 @@ halloweenObserver.observe(document.body, {
 document.addEventListener('DOMContentLoaded', function() {
     addHalloweenToggle();
     loadHalloweenTheme();
-    
+
     // Dekorációk késleltetett hozzáadása
     setTimeout(() => {
         if (document.body.classList.contains('halloween-theme')) {
@@ -132,6 +132,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Theme alkalmazása oldal betöltésekor és minden DOM változásnál
 document.addEventListener('DOMContentLoaded', applyHalloweenThemeToAllElements);
+document.addEventListener('DOMContentLoaded', initMainNavToggles);
+
+let navOutsideHandlerBound = false;
+
+function setPageNavState(page, collapsed) {
+  if (!page) {
+    return;
+  }
+
+  if (collapsed) {
+    page.classList.add('nav-collapsed');
+  } else {
+    page.classList.remove('nav-collapsed');
+  }
+
+  const toggle = page.querySelector('.main-nav-toggle');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', (!collapsed).toString());
+  }
+
+  const nav = page.querySelector('.main-nav');
+  if (nav) {
+    nav.setAttribute('aria-hidden', collapsed ? 'true' : 'false');
+  }
+}
+
+function collapseAllNavPanels() {
+  document.querySelectorAll('.page').forEach(page => setPageNavState(page, true));
+}
+
+function handleNavOutsideClick(event) {
+  document.querySelectorAll('.page:not(.nav-collapsed)').forEach(page => {
+    const panel = page.querySelector('.main-nav-panel');
+    if (panel && !panel.contains(event.target)) {
+      setPageNavState(page, true);
+    }
+  });
+}
+
+function handleNavEscape(event) {
+  if (event.key === 'Escape') {
+    document.querySelectorAll('.page:not(.nav-collapsed)').forEach(page => {
+      setPageNavState(page, true);
+    });
+  }
+}
 
 // MutationObserver a dinamikus elemekhez
 const observer = new MutationObserver(function(mutations) {
@@ -147,10 +193,58 @@ observer.observe(document.body, {
     subtree: true
 });
 // === OLDAL KEZELÉS ===
+function initMainNavToggles() {
+  const pages = document.querySelectorAll('.page');
+
+  pages.forEach(page => {
+    setPageNavState(page, true);
+
+    const toggle = page.querySelector('.main-nav-toggle');
+    if (toggle && !toggle.dataset.navBound) {
+      toggle.dataset.navBound = 'true';
+      toggle.addEventListener('click', () => {
+        const isCollapsed = page.classList.contains('nav-collapsed');
+
+        if (isCollapsed) {
+          document.querySelectorAll('.page').forEach(otherPage => {
+            if (otherPage !== page) {
+              setPageNavState(otherPage, true);
+            }
+          });
+          setPageNavState(page, false);
+
+          const firstNavButton = page.querySelector('.main-nav .nav-btn');
+          if (firstNavButton) {
+            requestAnimationFrame(() => firstNavButton.focus());
+          }
+        } else {
+          setPageNavState(page, true);
+        }
+      });
+    }
+
+    const navButtons = page.querySelectorAll('.main-nav .nav-btn');
+    navButtons.forEach(button => {
+      if (!button.dataset.navBound) {
+        button.dataset.navBound = 'true';
+        button.addEventListener('click', () => setPageNavState(page, true));
+      }
+    });
+  });
+
+  if (!navOutsideHandlerBound) {
+    document.addEventListener('click', handleNavOutsideClick);
+    document.addEventListener('keydown', handleNavEscape);
+    navOutsideHandlerBound = true;
+  }
+}
+
 function showPage(pageName) {
   try {
     console.log('🔄 Oldalváltás:', pageName);
-    
+
+    collapseAllNavPanels();
+
     // Ellenőrizzük, hogy az oldal elérhető-e
     const adminPages = ['statisztika', 'autokKepek', 'tuningok', 'eladottAutok', 'tagAdmin'];
     if (adminPages.includes(pageName) && !currentUser) {
