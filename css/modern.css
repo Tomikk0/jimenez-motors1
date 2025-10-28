@@ -61,11 +61,18 @@ body::before {
 }
 
 body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100vw;      /* a kép végigér a monitoron */
+  height: 10cm;      /* a sáv magassága 10 cm */
   background: url('https://images.unsplash.com/photo-1521579971123-1192931a1452?auto=format&fit=crop&w=1800&q=80')
-                no-repeat right 6% / clamp(420px, 46vw, 820px);
+              no-repeat center center / cover;
   opacity: 0.35;
   mix-blend-mode: lighten;
   filter: saturate(110%) contrast(110%);
+  z-index: -1;
 }
 
 
@@ -1307,16 +1314,16 @@ select:focus {
 }
 
 .car-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1.4rem;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  gap: 1.3rem;
   padding: 1.75rem 1.75rem 2rem;
 }
 
 .car-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
 }
 
@@ -1325,6 +1332,16 @@ select:focus {
   font-size: 1.3rem;
   font-weight: 600;
   color: #f8fafc;
+  display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.8rem;
+  line-height: 1.3;
+}
+
+.car-card-header .status-badge {
+  flex-shrink: 0;
 }
 
 .car-card-tuning {
@@ -1332,11 +1349,17 @@ select:focus {
   color: rgba(226, 232, 240, 0.7);
   font-size: 0.95rem;
   line-height: 1.4;
+  display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 3.4rem;
 }
 
 .car-card-prices {
   display: grid;
   gap: 0.9rem;
+  align-self: stretch;
 }
 
 .car-card-price {
@@ -1375,12 +1398,18 @@ select:focus {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  margin-top: auto;
 }
 
 .seller-name {
   font-weight: 600;
   letter-spacing: 0.03em;
   color: #e2e8f0;
+  display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.4rem;
 }
 
 .seller-phone {
@@ -1397,11 +1426,12 @@ select:focus {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+  margin-top: 1.2rem;
 }
 
 .car-card-actions .modern-btn-sold,
 .car-card-actions .modern-btn-delete {
-  flex: 1 1 auto;
+  flex: 1 1 48%;
   justify-content: center;
 }
 
