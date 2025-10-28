@@ -49,32 +49,23 @@ body {
 
 @media (min-width: 1024px) {
   .page {
-    display: grid;
-    grid-template-columns: clamp(240px, 22vw, 280px) minmax(0, 1fr);
-    gap: clamp(22px, 3vw, 38px);
-    align-items: start;
-    transition: grid-template-columns 0.35s ease;
+    position: relative;
   }
 
   .page > .main-nav-panel {
-    grid-column: 1;
-    grid-row: 1 / span 99;
+    position: fixed;
+    top: clamp(12px, 4vh, 48px);
+    left: clamp(18px, 4vw, 72px);
+    z-index: 24;
   }
 
   .page > :not(.main-nav-panel) {
-    grid-column: 2;
-  }
-
-  .page.nav-collapsed {
-    grid-template-columns: clamp(70px, 8vw, 96px) minmax(0, 1fr);
-  }
-
-  .page.nav-collapsed .main-nav-panel {
-    align-items: center;
+    position: relative;
+    z-index: 1;
   }
 
   .page.nav-collapsed .main-nav {
-    transform: translateX(calc(-100% - 24px));
+    transform: translateX(calc(-100% - clamp(18px, 3vw, 32px)));
     opacity: 0;
     pointer-events: none;
     min-width: 0;
@@ -185,9 +176,9 @@ body::after {
   flex-direction: column;
   gap: 14px;
   position: sticky;
-  top: clamp(18px, 3vw, 32px);
+  top: clamp(10px, 3vw, 26px);
   align-self: flex-start;
-  z-index: 3;
+  z-index: 12;
 }
 
 .main-nav-toggle {
@@ -256,6 +247,16 @@ body::after {
   width: clamp(220px, 20vw, 260px);
   transition: transform 0.35s ease, opacity 0.35s ease;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.page.nav-collapsed .main-nav {
+  transform: translateX(calc(-100% - 24px));
+  opacity: 0;
+  pointer-events: none;
+  min-width: 0;
+  width: 0;
 }
 
 @media (max-width: 1023px) {
