@@ -270,6 +270,9 @@ function showPage(pageName) {
       allActiveButtons.forEach(btn => {
         btn.classList.add('active');
       });
+
+      // Az újonnan aktív oldalhoz igazítjuk a menüazonosítót
+      updateActiveNavIdentifier();
     }
 
     // Oldalsó menü bezárása és azonosító frissítése

@@ -185,16 +185,22 @@ body.menu-open {
 .menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4, 7, 16, 0.55);
+  background: transparent;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
   z-index: 1200;
 }
 
 body.menu-open .menu-overlay {
   opacity: 1;
   pointer-events: auto;
+}
+
+@media (min-width: 900px) {
+  .menu-overlay {
+    display: none;
+  }
 }
 
 .main-nav {
