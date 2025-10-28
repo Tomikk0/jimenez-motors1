@@ -168,6 +168,77 @@ function updateActiveNavIdentifier() {
   }
 }
 
+// FIGYELI A LÁBLÉCET, HOGY A MENÜ NE TAKARJA KI
+let drawerFooterObserver;
+let drawerFooterAnimationFrame;
+
+function applyDrawerFooterOffset(amount) {
+  const root = document.documentElement;
+  if (!root) {
+    return;
+  }
+
+  const safeAmount = Math.max(0, Math.round(amount));
+  root.style.setProperty('--drawer-footer-offset', `${safeAmount}px`);
+}
+
+function initializeDrawerFooterObserver() {
+  if (drawerFooterObserver || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+    return;
+  }
+
+  const footer = document.getElementById('siteFooter');
+  if (!footer) {
+    return;
+  }
+
+  const processEntry = entry => {
+    const offset = entry.isIntersecting ? entry.intersectionRect.height : 0;
+
+    if (drawerFooterAnimationFrame) {
+      cancelAnimationFrame(drawerFooterAnimationFrame);
+    }
+
+    if (typeof requestAnimationFrame === 'undefined') {
+      applyDrawerFooterOffset(offset);
+      return;
+    }
+
+    drawerFooterAnimationFrame = requestAnimationFrame(() => {
+      applyDrawerFooterOffset(offset);
+      drawerFooterAnimationFrame = null;
+    });
+  };
+
+  drawerFooterObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.target === footer) {
+        processEntry(entry);
+      }
+    });
+  }, {
+    threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
+  });
+
+  const rect = footer.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
+  applyDrawerFooterOffset(visibleHeight > 0 ? visibleHeight : 0);
+
+  drawerFooterObserver.observe(footer);
+
+  window.addEventListener('resize', () => {
+    if (!drawerFooterObserver) {
+      return;
+    }
+
+    const resizeRect = footer.getBoundingClientRect();
+    const resizeViewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const resizeVisibleHeight = Math.min(resizeRect.bottom, resizeViewportHeight) - Math.max(resizeRect.top, 0);
+    applyDrawerFooterOffset(resizeVisibleHeight > 0 ? resizeVisibleHeight : 0);
+  }, { passive: true });
+}
+
 function toggleMenu(force) {
   const body = document.body;
   const toggleBtn = document.querySelector('.menu-toggle');
@@ -223,6 +294,7 @@ function initializeSideMenu() {
   });
 
   updateActiveNavIdentifier();
+  initializeDrawerFooterObserver();
 }
 
 document.addEventListener('DOMContentLoaded', initializeSideMenu);
