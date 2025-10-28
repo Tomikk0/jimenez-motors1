@@ -148,10 +148,6 @@ body::after {
 }
 
 /* Navigation */
-body.menu-open {
-  overflow: hidden;
-}
-
 .menu-toggle {
   position: fixed;
   top: 22px;
@@ -194,7 +190,6 @@ body.menu-open {
 
 body.menu-open .menu-overlay {
   opacity: 1;
-  pointer-events: auto;
 }
 
 @media (min-width: 900px) {
