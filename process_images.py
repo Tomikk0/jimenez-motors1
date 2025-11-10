@@ -21,14 +21,26 @@ def extract_value(pattern, text, cast=str, default=None):
             raw_value = next((part for part in raw_value if part), "")
         try:
             if cast in (int, float):
-                number_match = re.search(r"-?\d+(?:[\.,]\d+)?", raw_value)
+                number_match = re.search(r"-?\d+(?:[\s\u00A0\.,]\d+)*(?:/\d+)?", raw_value)
                 if not number_match:
                     return default
 
-                number_text = number_match.group(0).replace(",", ".")
+                number_text = number_match.group(0)
                 if cast is int:
-                    return int(float(number_text))
-                return float(number_text)
+                    digits_only = re.sub(r"[^0-9-]", "", number_text)
+                    if digits_only in ("", "-"):
+                        return default
+                    return int(digits_only)
+
+                normalized = number_text.replace("\u00A0", "").replace(" ", "")
+                normalized = normalized.replace(",", ".")
+                if normalized.count(".") > 1:
+                    normalized = normalized.replace(".", "", normalized.count(".") - 1)
+
+                if re.fullmatch(r"-?", normalized):
+                    return default
+
+                return float(normalized)
 
             cleaned_text = clean_text(raw_value)
             return cast(cleaned_text)
@@ -235,8 +247,8 @@ def process_images(images):
             )
             data["seller"] = extract_first(
                 [
-                    r"Eladó[:\- ]+([A-Za-z\s\.]+)",
-                    r"Elado[:\- ]+([A-Za-z\s\.]+)",
+                    r"Elad[óo][:\- ]+([A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9\-\s\.]+)",
+                    r"Tulajdonos[:\- ]+([A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9\-\s\.]+)",
                 ],
                 text,
             )
@@ -296,6 +308,7 @@ def process_images(images):
                 [
                     r"Chip szint[:\- ]*([0-9]+)",
                     r"Chip tuning[:\- ]*([0-9]+)",
+                    r"Chiptuning[:\- ]*([0-9]+)",
                 ],
                 text,
                 int,
@@ -383,6 +396,7 @@ def process_images(images):
             r"Chip szint[:\- ]*([0-9]+)",
             r"Chip tuning[:\- ]*([0-9]+)",
             r"Chipszint[:\- ]*([0-9]+)",
+            r"Chiptuning[:\- ]*([0-9]+)",
         ],
         "steering_angle": [r"Kormányzási szög[:\- ]*([0-9]+)", r"Kormanyzasi szog[:\- ]*([0-9]+)"],
     }
@@ -404,7 +418,7 @@ def process_images(images):
             "Valtoszint",
         ],
         "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek", "Kerekszint"],
-        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint"],
+        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint", "Chiptuning"],
         "steering_angle": [
             "Kormányzási szög",
             "Kormanyzasi szog",
@@ -467,7 +481,7 @@ def process_images(images):
         "motor_level": ["Motor szint", "Motor tuning", "Motor", "Motorszint"],
         "transmission_level": ["Váltó szint", "Valto szint", "Váltó", "Valto", "Valtoszint"],
         "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek", "Kerekszint"],
-        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint"],
+        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint", "Chiptuning"],
         "steering_angle": ["Kormányzási szög", "Kormanyzasi szog", "Kormányzási", "Kormanyzasi"],
     }
 
@@ -486,15 +500,18 @@ def process_images(images):
             ]
 
             for variant in variants:
-                fallback = extract_text_field(combined_text, [variant])
-                if not fallback:
-                    continue
+                for source in (combined_text, raw_combined_text):
+                    fallback = extract_text_field(source, [variant])
+                    if not fallback:
+                        continue
 
-                if field == "phone" and not re.search(r"\d", fallback):
-                    continue
+                    if field == "phone" and not re.search(r"\d", fallback):
+                        continue
 
-                data[field] = fallback
-                break
+                    data[field] = fallback
+                    break
+                if data[field]:
+                    break
 
     if not data["car_name"] and combined_text:
         name = extract_first(
@@ -523,6 +540,10 @@ def process_images(images):
 
     if not data["price"]:
         data["price"] = 0
+
+    for field in ["car_name", "engine_condition", "seller", "phone", "drivetype"]:
+        if data[field] is None:
+            data[field] = ""
 
     for field in [
         "air_ride",
