@@ -44,19 +44,39 @@ def interpret_flag(raw_value):
     return 1 if normalized else 0
 
 
+def _variant_pattern(variant: str) -> str:
+    normalized_variant = strip_accents(variant).lower()
+    pattern_parts = []
+
+    for ch in normalized_variant:
+        if ch.isalnum():
+            pattern_parts.append(re.escape(ch))
+        elif ch.isspace() or ch == "-":
+            pattern_parts.append(r"[\s\-]*")
+        else:
+            pattern_parts.append(re.escape(ch))
+
+    return "".join(pattern_parts)
+
+
 def extract_flag_field(text, variants):
     normalized_text = strip_accents(text).lower()
+
     for variant in variants:
-        normalized_variant = strip_accents(variant).lower()
-        pattern = rf"{normalized_variant}[:\- ]*(van|nincs|igen|nem|be|ki|on|off|aktiv|inaktiv)"
-        match = re.search(pattern, normalized_text)
+        pattern = _variant_pattern(variant)
+        value_pattern = (
+            r"(van|nincs|igen|nem|be|ki|on|off|aktiv|inaktiv|[0-9]+(?:/[0-9]+)?)"
+        )
+
+        match = re.search(rf"{pattern}[\s:\-]*{value_pattern}", normalized_text)
         if match:
             return interpret_flag(match.group(1))
 
-        if f"{normalized_variant} nincs" in normalized_text:
-            return 0
-        if f"{normalized_variant} van" in normalized_text:
+        # Fallback: keressük külön a VAN / NINCS kulcsszavakat a mintával kombinálva
+        if re.search(rf"{pattern}[\s:\-]*van", normalized_text):
             return 1
+        if re.search(rf"{pattern}[\s:\-]*nincs", normalized_text):
+            return 0
 
     return None
 
