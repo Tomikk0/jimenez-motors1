@@ -21,10 +21,14 @@ def extract_value(pattern, text, cast=str, default=None):
             raw_value = next((part for part in raw_value if part), "")
         try:
             if cast in (int, float):
-                cleaned = re.sub(r"[^0-9\-]", "", raw_value)
-                if cleaned == "":
+                number_match = re.search(r"-?\d+(?:[\.,]\d+)?", raw_value)
+                if not number_match:
                     return default
-                return cast(cleaned)
+
+                number_text = number_match.group(0).replace(",", ".")
+                if cast is int:
+                    return int(float(number_text))
+                return float(number_text)
 
             cleaned_text = clean_text(raw_value)
             return cast(cleaned_text)
@@ -366,6 +370,23 @@ def process_images(images):
             if value is not None:
                 data[field] = value
 
+    textual_numeric_variants = {
+        "tuning_points": ["Tuning pont", "Tuningpont", "Tuning"],
+        "motor_level": ["Motor szint", "Motor tuning", "Motor"],
+        "transmission_level": ["Váltó szint", "Valto szint", "Váltó", "Valto"],
+        "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek"],
+        "chip_level": ["Chip szint", "Chip tuning", "Chip"],
+        "steering_angle": ["Kormányzási szög", "Kormanyzasi szog", "Kormányzási", "Kormanyzasi"],
+    }
+
+    for field, variants in textual_numeric_variants.items():
+        if data[field] is None:
+            snippet = extract_text_field(combined_text, variants)
+            if snippet:
+                number_match = re.search(r"-?\d+(?:[\.,]\d+)?", snippet)
+                if number_match:
+                    data[field] = int(float(number_match.group(0).replace(",", ".")))
+
     for field in ["seller", "phone"]:
         if not data[field]:
             variants = [
@@ -424,6 +445,19 @@ def process_images(images):
         "despawn_protect",
     ]:
         data[field] = int(bool(data[field]))
+
+    numeric_defaults = [
+        "tuning_points",
+        "motor_level",
+        "transmission_level",
+        "wheel_level",
+        "chip_level",
+        "steering_angle",
+    ]
+
+    for field in numeric_defaults:
+        if data[field] is None:
+            data[field] = 0
 
     return data
 
