@@ -27,10 +27,10 @@ def extract_value(pattern, text, cast=str, default=None):
 
                 number_text = number_match.group(0)
                 if cast is int:
-                    digits_only = re.sub(r"[^0-9-]", "", number_text)
-                    if digits_only in ("", "-"):
+                    first_integer = re.search(r"-?\d+", number_text)
+                    if not first_integer:
                         return default
-                    return int(digits_only)
+                    return int(first_integer.group(0))
 
                 normalized = number_text.replace("\u00A0", "").replace(" ", "")
                 normalized = normalized.replace(",", ".")
