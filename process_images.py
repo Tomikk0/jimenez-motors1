@@ -329,49 +329,49 @@ def process_images(images):
             if data["tuning_points"] is None:
                 data["tuning_points"] = extract_first(
                     [
-                        r"Tuning pont(?:ok)?[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-                        r"Tuningpont(?:ok)?[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                        r"Tuning\s*pont(?:ok)?[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                        r"Tuningpont(?:ok)?[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                     ],
                     text,
                     int,
                 )
             data["motor_level"] = extract_first(
                 [
-                    r"Motor szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-                    r"Motor tuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Motor\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Motor\s*tuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
             )
             data["transmission_level"] = extract_first(
                 [
-                    r"Váltó szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-                    r"Valto szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Váltó\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Valto\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
             )
             data["wheel_level"] = extract_first(
                 [
-                    r"Kerék szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-                    r"Kerek szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Kerék\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Kerek\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
             )
             data["chip_level"] = extract_first(
                 [
-                    r"Chip szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-                    r"Chip tuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-                    r"Chiptuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Chip\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Chip\s*tuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Chiptuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
             )
             data["steering_angle"] = extract_first(
                 [
-                    r"Kormányzási szög[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-                    r"Kormanyzasi szog[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Kormányzási\s*szög[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Kormanyzasi\s*szog[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
@@ -428,34 +428,34 @@ def process_images(images):
 
     numeric_fallbacks = {
         "tuning_points": [
-            r"Tuning pont(?:ok)?[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Tuningpont(?:ok)?[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"TP[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Tuning\s*pont(?:ok)?[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Tuningpont(?:ok)?[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"TP[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "motor_level": [
-            r"Motor szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Motor tuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Motorszint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Motor\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Motor\s*tuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Motorszint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "transmission_level": [
-            r"Váltó szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Valto szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Valtoszint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Váltó\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Valto\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Valtoszint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "wheel_level": [
-            r"Kerék szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Kerek szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Kerekszint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Kerék\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Kerek\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Kerekszint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "chip_level": [
-            r"Chip szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Chip tuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Chipszint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Chiptuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Chip\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Chip\s*tuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Chipszint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Chiptuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "steering_angle": [
-            r"Kormányzási szög[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
-            r"Kormanyzasi szog[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Kormányzási\s*szög[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Kormanyzasi\s*szog[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
     }
 
