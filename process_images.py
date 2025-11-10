@@ -2,6 +2,35 @@ import pytesseract, re, sys, json, os, unicodedata
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 
+def normalize_digitlike(text: str) -> str:
+    translation = str.maketrans(
+        {
+            "O": "0",
+            "o": "0",
+            "Ø": "0",
+            "ö": "0",
+            "Ó": "0",
+            "ó": "0",
+            "D": "0",
+            "I": "1",
+            "l": "1",
+            "|": "1",
+            "!": "1",
+            "í": "1",
+            "ï": "1",
+            "S": "5",
+            "s": "5",
+            "Z": "2",
+            "z": "2",
+            "B": "8",
+            "G": "6",
+            "g": "9",
+        }
+    )
+
+    return text.translate(translation)
+
+
 def strip_accents(value):
     return "".join(
         char for char in unicodedata.normalize("NFD", value)
@@ -21,16 +50,27 @@ def extract_value(pattern, text, cast=str, default=None):
             raw_value = next((part for part in raw_value if part), "")
         try:
             if cast in (int, float):
-                number_match = re.search(r"-?\d+(?:[\s\u00A0\.,]\d+)*(?:/\d+)?", raw_value)
+                normalized_raw = normalize_digitlike(raw_value)
+                number_match = re.search(
+                    r"-?\d+(?:[\s\u00A0\.,]\d+)*(?:/\d+)?",
+                    normalized_raw,
+                )
                 if not number_match:
                     return default
 
                 number_text = number_match.group(0)
                 if cast is int:
-                    first_integer = re.search(r"-?\d+", number_text)
-                    if not first_integer:
+                    integers = re.findall(r"-?\d+", number_text)
+                    if not integers:
                         return default
-                    return int(first_integer.group(0))
+
+                    first_integer = int(integers[0])
+                    if first_integer == 0 and len(integers) > 1:
+                        for candidate in integers[1:]:
+                            value = int(candidate)
+                            if value != 0:
+                                return value
+                    return first_integer
 
                 normalized = number_text.replace("\u00A0", "").replace(" ", "")
                 normalized = normalized.replace(",", ".")
@@ -431,9 +471,12 @@ def process_images(images):
         if data[field] is None:
             snippet = extract_text_field(combined_text, variants)
             if snippet:
-                number_match = re.search(r"-?\d+(?:[\.,]\d+)?", snippet)
+                normalized_snippet = normalize_digitlike(snippet)
+                number_match = re.search(r"-?\d+(?:[\.,]\d+)?", normalized_snippet)
                 if number_match:
-                    data[field] = int(float(number_match.group(0).replace(",", ".")))
+                    data[field] = int(
+                        float(number_match.group(0).replace(",", "."))
+                    )
 
     def extract_numeric_near_keyword(text, variants, window=40):
         normalized_text, index_map = _normalized_with_index(text)
@@ -454,7 +497,9 @@ def process_images(images):
                         orig_start = index_map[number_start]
                         orig_end = index_map[number_end - 1] + 1
                         raw_fragment = text[orig_start:orig_end]
-                        digits = re.search(r"-?\d+", raw_fragment)
+                        digits = re.search(
+                            r"-?\d+", normalize_digitlike(raw_fragment)
+                        )
                         if digits:
                             return int(digits.group(0))
 
@@ -470,7 +515,9 @@ def process_images(images):
                         orig_start = index_map[number_start]
                         orig_end = index_map[number_end - 1] + 1
                         raw_fragment = text[orig_start:orig_end]
-                        digits = re.search(r"-?\d+", raw_fragment)
+                        digits = re.search(
+                            r"-?\d+", normalize_digitlike(raw_fragment)
+                        )
                         if digits:
                             return int(digits.group(0))
 
