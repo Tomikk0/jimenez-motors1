@@ -172,6 +172,7 @@ def process_images(images):
     }
 
     texts = []
+    raw_texts = []
 
     flag_variants = {
         "air_ride": ["Air Ride", "AirRide", "Air-Ride"],
@@ -204,13 +205,14 @@ def process_images(images):
         img = ImageEnhance.Contrast(img).enhance(1.8)
         img = img.filter(ImageFilter.SHARPEN)
 
-        text = pytesseract.image_to_string(
+        raw_text = pytesseract.image_to_string(
             img,
             lang="hun+eng",
             config="--oem 3 --psm 6",
         )
-        text = clean_text(text)
+        text = clean_text(raw_text)
         texts.append(text)
+        raw_texts.append(raw_text)
 
         # 1. kép = eladó autó (ár, név, eladó)
         if idx == 0:
@@ -327,6 +329,7 @@ def process_images(images):
                 data["drivetype"] = drivetype_value
 
     combined_text = " ".join(texts)
+    raw_combined_text = "\n".join(raw_texts)
 
     if data["price"] in (None, 0):
         fallback_price = extract_first(
@@ -356,11 +359,31 @@ def process_images(images):
             data["engine_condition"] = fallback_engine
 
     numeric_fallbacks = {
-        "tuning_points": [r"Tuning pont(?:ok)?[:\- ]*([0-9]+)", r"Tuningpont(?:ok)?[:\- ]*([0-9]+)"],
-        "motor_level": [r"Motor szint[:\- ]*([0-9]+)", r"Motor tuning[:\- ]*([0-9]+)"],
-        "transmission_level": [r"Váltó szint[:\- ]*([0-9]+)", r"Valto szint[:\- ]*([0-9]+)"],
-        "wheel_level": [r"Kerék szint[:\- ]*([0-9]+)", r"Kerek szint[:\- ]*([0-9]+)"],
-        "chip_level": [r"Chip szint[:\- ]*([0-9]+)", r"Chip tuning[:\- ]*([0-9]+)"],
+        "tuning_points": [
+            r"Tuning pont(?:ok)?[:\- ]*([0-9]+)",
+            r"Tuningpont(?:ok)?[:\- ]*([0-9]+)",
+            r"TP[:\- ]*([0-9]+)",
+        ],
+        "motor_level": [
+            r"Motor szint[:\- ]*([0-9]+)",
+            r"Motor tuning[:\- ]*([0-9]+)",
+            r"Motorszint[:\- ]*([0-9]+)",
+        ],
+        "transmission_level": [
+            r"Váltó szint[:\- ]*([0-9]+)",
+            r"Valto szint[:\- ]*([0-9]+)",
+            r"Valtoszint[:\- ]*([0-9]+)",
+        ],
+        "wheel_level": [
+            r"Kerék szint[:\- ]*([0-9]+)",
+            r"Kerek szint[:\- ]*([0-9]+)",
+            r"Kerekszint[:\- ]*([0-9]+)",
+        ],
+        "chip_level": [
+            r"Chip szint[:\- ]*([0-9]+)",
+            r"Chip tuning[:\- ]*([0-9]+)",
+            r"Chipszint[:\- ]*([0-9]+)",
+        ],
         "steering_angle": [r"Kormányzási szög[:\- ]*([0-9]+)", r"Kormanyzasi szog[:\- ]*([0-9]+)"],
     }
 
@@ -371,12 +394,23 @@ def process_images(images):
                 data[field] = value
 
     textual_numeric_variants = {
-        "tuning_points": ["Tuning pont", "Tuningpont", "Tuning"],
-        "motor_level": ["Motor szint", "Motor tuning", "Motor"],
-        "transmission_level": ["Váltó szint", "Valto szint", "Váltó", "Valto"],
-        "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek"],
-        "chip_level": ["Chip szint", "Chip tuning", "Chip"],
-        "steering_angle": ["Kormányzási szög", "Kormanyzasi szog", "Kormányzási", "Kormanyzasi"],
+        "tuning_points": ["Tuning pont", "Tuningpont", "Tuning", "TP"],
+        "motor_level": ["Motor szint", "Motor tuning", "Motor", "Motorszint"],
+        "transmission_level": [
+            "Váltó szint",
+            "Valto szint",
+            "Váltó",
+            "Valto",
+            "Valtoszint",
+        ],
+        "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek", "Kerekszint"],
+        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint"],
+        "steering_angle": [
+            "Kormányzási szög",
+            "Kormanyzasi szog",
+            "Kormányzási",
+            "Kormanyzasi",
+        ],
     }
 
     for field, variants in textual_numeric_variants.items():
@@ -386,6 +420,62 @@ def process_images(images):
                 number_match = re.search(r"-?\d+(?:[\.,]\d+)?", snippet)
                 if number_match:
                     data[field] = int(float(number_match.group(0).replace(",", ".")))
+
+    def extract_numeric_near_keyword(text, variants, window=40):
+        normalized_text, index_map = _normalized_with_index(text)
+
+        for variant in variants:
+            pattern = _variant_pattern(variant)
+
+            for match in re.finditer(pattern, normalized_text):
+                # Search after the keyword
+                start = match.end()
+                after_slice = normalized_text[start : min(len(normalized_text), start + window)]
+                number_match = re.search(r"-?\d+", after_slice)
+                if number_match:
+                    number_start = start + number_match.start()
+                    number_end = start + number_match.end()
+
+                    if number_start < len(index_map) and number_end - 1 < len(index_map):
+                        orig_start = index_map[number_start]
+                        orig_end = index_map[number_end - 1] + 1
+                        raw_fragment = text[orig_start:orig_end]
+                        digits = re.search(r"-?\d+", raw_fragment)
+                        if digits:
+                            return int(digits.group(0))
+
+                # Search before the keyword (use last occurrence)
+                end = match.start()
+                before_slice = normalized_text[max(0, end - window) : end]
+                number_match = re.search(r"-?\d+(?:(?:[\./]\d+))?$", before_slice)
+                if number_match:
+                    number_start = max(0, end - window) + number_match.start()
+                    number_end = max(0, end - window) + number_match.end()
+
+                    if number_start < len(index_map) and number_end - 1 < len(index_map):
+                        orig_start = index_map[number_start]
+                        orig_end = index_map[number_end - 1] + 1
+                        raw_fragment = text[orig_start:orig_end]
+                        digits = re.search(r"-?\d+", raw_fragment)
+                        if digits:
+                            return int(digits.group(0))
+
+        return None
+
+    keyword_numeric_variants = {
+        "tuning_points": ["Tuning pont", "Tuningpont", "Tuning", "TP"],
+        "motor_level": ["Motor szint", "Motor tuning", "Motor", "Motorszint"],
+        "transmission_level": ["Váltó szint", "Valto szint", "Váltó", "Valto", "Valtoszint"],
+        "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek", "Kerekszint"],
+        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint"],
+        "steering_angle": ["Kormányzási szög", "Kormanyzasi szog", "Kormányzási", "Kormanyzasi"],
+    }
+
+    for field, variants in keyword_numeric_variants.items():
+        if data[field] is None:
+            value = extract_numeric_near_keyword(raw_combined_text, variants)
+            if value is not None:
+                data[field] = value
 
     for field in ["seller", "phone"]:
         if not data[field]:
