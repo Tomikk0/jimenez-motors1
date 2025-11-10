@@ -21,17 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = json_decode($output, true);
 
         if ($result) {
-            // Biztonsági konvertálás a logikai mezőkhöz
-$boolFields = ['air_ride', 'nitro', 'dark_glass', 'drivetype', 'turbo', 'compressor', 'neon', 'colored_lights', 'despawn_protect'];
+        // Biztonsági konvertálás a logikai mezőkhöz
+$boolFields = ['air_ride', 'nitro', 'dark_glass', 'turbo', 'compressor', 'neon', 'colored_lights', 'despawn_protect'];
 foreach ($boolFields as $field) {
-    if (empty($result[$field])) {
+    if (!isset($result[$field]) || $result[$field] === null || $result[$field] === '') {
         $result[$field] = 0;
-    } else if ($result[$field] === true || strtolower($result[$field]) === "van") {
+    } else if ($result[$field] === true || strtolower((string)$result[$field]) === "van") {
         $result[$field] = 1;
     } else {
         $result[$field] = (int)$result[$field];
     }
 }
+
+        if (!isset($result['drivetype']) || $result['drivetype'] === null) {
+            $result['drivetype'] = '';
+        }
             // Kapcsolódás adatbázishoz
             $conn = new mysqli("localhost", "root", "Root123", "autok");
             if ($conn->connect_error) die("DB hiba: " . $conn->connect_error);
@@ -42,7 +46,7 @@ foreach ($boolFields as $field) {
             ");
             $mainImage = basename($uploadedFiles[0]); // az első kép a fő kép
             $stmt->bind_param(
-                "sisssiiiiiiisiiiiiiis",
+                "sisssiiiiiiiiisiiiiis",
                 $result['car_name'],
                 $result['price'],
                 $result['engine_condition'],
