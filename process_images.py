@@ -42,6 +42,31 @@ def clean_text(text):
     return re.sub(r"\s+", " ", text.replace("\n", " ")).strip()
 
 
+def parse_preferred_int(fragment: str, default=None):
+    normalized_fragment = normalize_digitlike(fragment)
+    number_match = re.search(
+        r"-?\d+(?:[\s\u00A0\.,]*\d+)*(?:/\d+)*",
+        normalized_fragment,
+    )
+    if not number_match:
+        return default
+
+    integers = re.findall(r"-?\d+", number_match.group(0))
+    if not integers:
+        return default
+
+    first_value = int(integers[0])
+    if first_value != 0 or len(integers) == 1:
+        return first_value
+
+    for candidate in integers[1:]:
+        value = int(candidate)
+        if value != 0:
+            return value
+
+    return first_value
+
+
 def extract_value(pattern, text, cast=str, default=None):
     match = re.search(pattern, text, re.IGNORECASE)
     if match:
@@ -52,7 +77,7 @@ def extract_value(pattern, text, cast=str, default=None):
             if cast in (int, float):
                 normalized_raw = normalize_digitlike(raw_value)
                 number_match = re.search(
-                    r"-?\d+(?:[\s\u00A0\.,]\d+)*(?:/\d+)?",
+                    r"-?\d+(?:[\s\u00A0\.,]*\d+)*(?:/\d+)*",
                     normalized_raw,
                 )
                 if not number_match:
@@ -60,17 +85,7 @@ def extract_value(pattern, text, cast=str, default=None):
 
                 number_text = number_match.group(0)
                 if cast is int:
-                    integers = re.findall(r"-?\d+", number_text)
-                    if not integers:
-                        return default
-
-                    first_integer = int(integers[0])
-                    if first_integer == 0 and len(integers) > 1:
-                        for candidate in integers[1:]:
-                            value = int(candidate)
-                            if value != 0:
-                                return value
-                    return first_integer
+                    return parse_preferred_int(number_text, default=default)
 
                 normalized = number_text.replace("\u00A0", "").replace(" ", "")
                 normalized = normalized.replace(",", ".")
@@ -287,15 +302,15 @@ def process_images(images):
             )
             data["seller"] = extract_first(
                 [
-                    r"Elad[óo][:\- ]+([A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9\-\s\.]+)",
-                    r"Tulajdonos[:\- ]+([A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9\-\s\.]+)",
+                    r"Elad[óo][:\-= ]+([A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9\-\s\.]+)",
+                    r"Tulajdonos[:\-= ]+([A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9\-\s\.]+)",
                 ],
                 text,
             )
             data["phone"] = extract_first(
                 [
-                    r"Tel(?:efonszám)?[:\- ]*([0-9\+\s]+)",
-                    r"Tel(?:efonszam)?[:\- ]*([0-9\+\s]+)",
+                    r"Tel(?:efonszám)?[:\-= ]*([0-9\+\s]+)",
+                    r"Tel(?:efonszam)?[:\-= ]*([0-9\+\s]+)",
                 ],
                 text,
             )
@@ -314,49 +329,49 @@ def process_images(images):
             if data["tuning_points"] is None:
                 data["tuning_points"] = extract_first(
                     [
-                        r"Tuning pont(?:ok)?[:\- ]*([0-9]+)",
-                        r"Tuningpont(?:ok)?[:\- ]*([0-9]+)",
+                        r"Tuning pont(?:ok)?[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                        r"Tuningpont(?:ok)?[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                     ],
                     text,
                     int,
                 )
             data["motor_level"] = extract_first(
                 [
-                    r"Motor szint[:\- ]*([0-9]+)",
-                    r"Motor tuning[:\- ]*([0-9]+)",
+                    r"Motor szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Motor tuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
             )
             data["transmission_level"] = extract_first(
                 [
-                    r"Váltó szint[:\- ]*([0-9]+)",
-                    r"Valto szint[:\- ]*([0-9]+)",
+                    r"Váltó szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Valto szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
             )
             data["wheel_level"] = extract_first(
                 [
-                    r"Kerék szint[:\- ]*([0-9]+)",
-                    r"Kerek szint[:\- ]*([0-9]+)",
+                    r"Kerék szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Kerek szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
             )
             data["chip_level"] = extract_first(
                 [
-                    r"Chip szint[:\- ]*([0-9]+)",
-                    r"Chip tuning[:\- ]*([0-9]+)",
-                    r"Chiptuning[:\- ]*([0-9]+)",
+                    r"Chip szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Chip tuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Chiptuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
             )
             data["steering_angle"] = extract_first(
                 [
-                    r"Kormányzási szög[:\- ]*([0-9]+)",
-                    r"Kormanyzasi szog[:\- ]*([0-9]+)",
+                    r"Kormányzási szög[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+                    r"Kormanyzasi szog[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                 ],
                 text,
                 int,
@@ -413,32 +428,35 @@ def process_images(images):
 
     numeric_fallbacks = {
         "tuning_points": [
-            r"Tuning pont(?:ok)?[:\- ]*([0-9]+)",
-            r"Tuningpont(?:ok)?[:\- ]*([0-9]+)",
-            r"TP[:\- ]*([0-9]+)",
+            r"Tuning pont(?:ok)?[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Tuningpont(?:ok)?[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"TP[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "motor_level": [
-            r"Motor szint[:\- ]*([0-9]+)",
-            r"Motor tuning[:\- ]*([0-9]+)",
-            r"Motorszint[:\- ]*([0-9]+)",
+            r"Motor szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Motor tuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Motorszint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "transmission_level": [
-            r"Váltó szint[:\- ]*([0-9]+)",
-            r"Valto szint[:\- ]*([0-9]+)",
-            r"Valtoszint[:\- ]*([0-9]+)",
+            r"Váltó szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Valto szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Valtoszint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "wheel_level": [
-            r"Kerék szint[:\- ]*([0-9]+)",
-            r"Kerek szint[:\- ]*([0-9]+)",
-            r"Kerekszint[:\- ]*([0-9]+)",
+            r"Kerék szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Kerek szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Kerekszint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
         "chip_level": [
-            r"Chip szint[:\- ]*([0-9]+)",
-            r"Chip tuning[:\- ]*([0-9]+)",
-            r"Chipszint[:\- ]*([0-9]+)",
-            r"Chiptuning[:\- ]*([0-9]+)",
+            r"Chip szint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Chip tuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Chipszint[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Chiptuning[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
         ],
-        "steering_angle": [r"Kormányzási szög[:\- ]*([0-9]+)", r"Kormanyzasi szog[:\- ]*([0-9]+)"],
+        "steering_angle": [
+            r"Kormányzási szög[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"Kormanyzasi szog[:\- ]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+        ],
     }
 
     for field, patterns in numeric_fallbacks.items():
@@ -471,12 +489,9 @@ def process_images(images):
         if data[field] is None:
             snippet = extract_text_field(combined_text, variants)
             if snippet:
-                normalized_snippet = normalize_digitlike(snippet)
-                number_match = re.search(r"-?\d+(?:[\.,]\d+)?", normalized_snippet)
-                if number_match:
-                    data[field] = int(
-                        float(number_match.group(0).replace(",", "."))
-                    )
+                value = parse_preferred_int(snippet)
+                if value is not None:
+                    data[field] = value
 
     def extract_numeric_near_keyword(text, variants, window=40):
         normalized_text, index_map = _normalized_with_index(text)
@@ -497,11 +512,9 @@ def process_images(images):
                         orig_start = index_map[number_start]
                         orig_end = index_map[number_end - 1] + 1
                         raw_fragment = text[orig_start:orig_end]
-                        digits = re.search(
-                            r"-?\d+", normalize_digitlike(raw_fragment)
-                        )
-                        if digits:
-                            return int(digits.group(0))
+                        value = parse_preferred_int(raw_fragment)
+                        if value is not None:
+                            return value
 
                 # Search before the keyword (use last occurrence)
                 end = match.start()
@@ -515,11 +528,9 @@ def process_images(images):
                         orig_start = index_map[number_start]
                         orig_end = index_map[number_end - 1] + 1
                         raw_fragment = text[orig_start:orig_end]
-                        digits = re.search(
-                            r"-?\d+", normalize_digitlike(raw_fragment)
-                        )
-                        if digits:
-                            return int(digits.group(0))
+                        value = parse_preferred_int(raw_fragment)
+                        if value is not None:
+                            return value
 
         return None
 
@@ -558,6 +569,30 @@ def process_images(images):
                     data[field] = fallback
                     break
                 if data[field]:
+                    break
+
+    if not data["seller"] and raw_texts:
+        first_text = raw_texts[0]
+        for line in first_text.splitlines():
+            normalized_line = strip_accents(line).lower()
+            if "elado" in normalized_line or "tulajdonos" in normalized_line:
+                candidate = None
+
+                separator_match = re.split(r"[:\-=]+", line, maxsplit=1)
+                if len(separator_match) == 2:
+                    candidate = clean_text(separator_match[1])
+
+                if not candidate:
+                    label_match = re.search(
+                        r"(Elad[óo]|Tulajdonos)",
+                        line,
+                        re.IGNORECASE,
+                    )
+                    if label_match:
+                        candidate = clean_text(line[label_match.end() :])
+
+                if candidate:
+                    data["seller"] = candidate
                     break
 
     if not data["car_name"] and combined_text:
