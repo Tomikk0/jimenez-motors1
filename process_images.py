@@ -422,7 +422,7 @@ def process_images(images):
                     text,
                     int,
                 )
-            data["motor_level"] = extract_first(
+            motor_level = extract_first(
                 [
                     r"Motor\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                     r"Motor\s*tuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
@@ -430,7 +430,10 @@ def process_images(images):
                 text,
                 int,
             )
-            data["transmission_level"] = extract_first(
+            if motor_level is not None:
+                data["motor_level"] = motor_level
+
+            transmission_level = extract_first(
                 [
                     r"Váltó\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                     r"Valto\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
@@ -438,7 +441,10 @@ def process_images(images):
                 text,
                 int,
             )
-            data["wheel_level"] = extract_first(
+            if transmission_level is not None:
+                data["transmission_level"] = transmission_level
+
+            wheel_level = extract_first(
                 [
                     r"Kerék\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                     r"Kerek\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
@@ -446,7 +452,10 @@ def process_images(images):
                 text,
                 int,
             )
-            data["chip_level"] = extract_first(
+            if wheel_level is not None:
+                data["wheel_level"] = wheel_level
+
+            chip_level = extract_first(
                 [
                     r"Chip\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                     r"Chip\s*tuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
@@ -455,7 +464,10 @@ def process_images(images):
                 text,
                 int,
             )
-            data["steering_angle"] = extract_first(
+            if chip_level is not None:
+                data["chip_level"] = chip_level
+
+            steering_angle = extract_first(
                 [
                     r"Kormányzási\s*szög[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
                     r"Kormanyzasi\s*szog[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
@@ -463,6 +475,8 @@ def process_images(images):
                 text,
                 int,
             )
+            if steering_angle is not None:
+                data["steering_angle"] = steering_angle
 
             # Extrák
             for field, variants in flag_variants.items():
