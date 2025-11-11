@@ -51,7 +51,17 @@ def parse_preferred_int(fragment: str, default=None):
     if not number_match:
         return default
 
-    integers = re.findall(r"-?\d+", number_match.group(0))
+    number_text = number_match.group(0)
+
+    if "/" not in number_text:
+        collapsed = re.sub(r"[\s\u00A0\.,]", "", number_text)
+        if collapsed not in {"", "-", "+"}:
+            try:
+                return int(collapsed)
+            except ValueError:
+                pass
+
+    integers = re.findall(r"-?\d+", number_text)
     if not integers:
         return default
 
@@ -341,7 +351,8 @@ def process_images(images):
                 ],
                 text,
             ) or "Mercedes-Benz SL63"
-            data["price"] = extract_first(
+
+            price_fragment = extract_first(
                 [
                     r"Ár[^0-9]*([0-9][0-9\s\.]*)",
                     r"Ar[^0-9]*([0-9][0-9\s\.]*)",
@@ -349,8 +360,10 @@ def process_images(images):
                     r"Ara[^0-9]*([0-9][0-9\s\.]*)",
                 ],
                 text,
-                int,
             )
+            if price_fragment:
+                data["price"] = parse_preferred_int(price_fragment)
+
             data["seller"] = extract_first(
                 [
                     r"Elad[óo][:\-= ]+([A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9\-\s\.]+)",
@@ -374,6 +387,29 @@ def process_images(images):
                 ],
                 text,
             )
+
+            if not data["seller"]:
+                seller_candidate = extract_text_field(
+                    raw_text,
+                    ["Eladó", "Elado", "Tulajdonos"],
+                )
+                if seller_candidate:
+                    seller_candidate = re.split(
+                        r"(?:Tel(?:efon)?|Tel\.)",
+                        seller_candidate,
+                        maxsplit=1,
+                    )[0]
+                    data["seller"] = clean_text(seller_candidate)
+
+            if data["price"]:
+                normalized_price_lines = [
+                    strip_accents(line).lower() for line in raw_text.splitlines()
+                ]
+                for normalized_line in normalized_price_lines:
+                    if "ar" in normalized_line and re.search(r"\d", normalized_line):
+                        if "mill" in normalized_line and data["price"] < 1_000_000:
+                            data["price"] *= 1_000_000
+                        break
 
         # 2–3. kép = tuning adatok
         else:
@@ -458,7 +494,7 @@ def process_images(images):
     raw_combined_text = "\n".join(raw_texts)
 
     if data["price"] in (None, 0):
-        fallback_price = extract_first(
+        fallback_price_fragment = extract_first(
             [
                 r"Ár[^0-9]*([0-9][0-9\s\.]*)",
                 r"Ar[^0-9]*([0-9][0-9\s\.]*)",
@@ -466,10 +502,14 @@ def process_images(images):
                 r"Ara[^0-9]*([0-9][0-9\s\.]*)",
             ],
             combined_text,
-            int,
         )
-        if fallback_price is not None:
-            data["price"] = fallback_price
+        if fallback_price_fragment:
+            data["price"] = parse_preferred_int(fallback_price_fragment)
+
+    if data["price"] and data["price"] < 1_000_000:
+        normalized_combined = strip_accents(raw_combined_text).lower()
+        if re.search(r"ar[^\n]*mill", normalized_combined):
+            data["price"] *= 1_000_000
 
     if not data["engine_condition"]:
         fallback_engine = extract_first(
@@ -489,31 +529,37 @@ def process_images(images):
             r"Tuning\s*pont(?:ok)?[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Tuningpont(?:ok)?[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"TP[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)\s*(?:TP|Tuning\s*pont(?:ok)?|Tuningpont(?:ok)?)",
         ],
         "motor_level": [
             r"Motor\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Motor\s*tuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Motorszint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)\s*(?:Motor\s*szint|Motor\s*tuning|Motorszint)",
         ],
         "transmission_level": [
             r"Váltó\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Valto\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Valtoszint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)\s*(?:Váltó\s*szint|Valto\s*szint|Valtoszint)",
         ],
         "wheel_level": [
             r"Kerék\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Kerek\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Kerekszint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)\s*(?:Kerék\s*szint|Kerek\s*szint|Kerekszint)",
         ],
         "chip_level": [
             r"Chip\s*szint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Chip\s*tuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Chipszint[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Chiptuning[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)\s*(?:Chipszint|Chip\s*szint|Chip\s*tuning|Chiptuning)",
         ],
         "steering_angle": [
             r"Kormányzási\s*szög[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
             r"Kormanyzasi\s*szog[\s:\-=]*([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)",
+            r"([0-9OIl]+(?:\s*/\s*[0-9OIl]+)?)\s*(?:Kormányzási\s*szög|Kormanyzasi\s*szog)",
         ],
     }
 
@@ -612,27 +658,48 @@ def process_images(images):
 
     if not data["seller"] and raw_texts:
         first_text = raw_texts[0]
-        for line in first_text.splitlines():
+        first_lines = first_text.splitlines()
+
+        for idx, line in enumerate(first_lines):
             normalized_line = strip_accents(line).lower()
-            if "elado" in normalized_line or "tulajdonos" in normalized_line:
-                candidate = None
-
-                separator_match = re.split(r"[:\-=]+", line, maxsplit=1)
-                if len(separator_match) == 2:
-                    candidate = clean_text(separator_match[1])
-
-                if not candidate:
-                    label_match = re.search(
-                        r"(Elad[óo]|Tulajdonos)",
-                        line,
-                        re.IGNORECASE,
-                    )
-                    if label_match:
-                        candidate = clean_text(line[label_match.end() :])
-
-                if candidate:
-                    data["seller"] = candidate
+            if re.search(r"tel", normalized_line) and re.search(r"\d", line):
+                for back in range(1, 3):
+                    prev_idx = idx - back
+                    if prev_idx < 0:
+                        break
+                    candidate_line = clean_text(first_lines[prev_idx])
+                    if not candidate_line:
+                        continue
+                    normalized_candidate = strip_accents(candidate_line).lower()
+                    if re.search(r"tel", normalized_candidate):
+                        continue
+                    data["seller"] = candidate_line
                     break
+                if data["seller"]:
+                    break
+
+        if not data["seller"]:
+            for line in first_lines:
+                normalized_line = strip_accents(line).lower()
+                if "elado" in normalized_line or "tulajdonos" in normalized_line:
+                    candidate = None
+
+                    separator_match = re.split(r"[:\-=]+", line, maxsplit=1)
+                    if len(separator_match) == 2:
+                        candidate = clean_text(separator_match[1])
+
+                    if not candidate:
+                        label_match = re.search(
+                            r"(Elad[óo]|Tulajdonos)",
+                            line,
+                            re.IGNORECASE,
+                        )
+                        if label_match:
+                            candidate = clean_text(line[label_match.end() :])
+
+                    if candidate:
+                        data["seller"] = candidate
+                        break
 
     if not data["car_name"] and combined_text:
         name = extract_first(
