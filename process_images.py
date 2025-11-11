@@ -214,6 +214,46 @@ def extract_text_field(text, variants):
 
     return None
 
+
+def extract_numeric_from_lines(text, variants, window=2):
+    if not text:
+        return None
+
+    lines = text.splitlines()
+    cleaned_lines = [clean_text(line) for line in lines]
+    normalized_lines = [strip_accents(line).lower() for line in cleaned_lines]
+
+    for idx, normalized in enumerate(normalized_lines):
+        if not normalized:
+            continue
+
+        for variant in variants:
+            pattern = _variant_pattern(variant)
+            if re.search(pattern, normalized):
+                # Try the same line first using both raw and cleaned versions
+                for source_line in (lines[idx], cleaned_lines[idx]):
+                    value = parse_preferred_int(source_line)
+                    if value is not None:
+                        return value
+
+                # Look at nearby lines for the numeric fragment in case it's separated
+                for offset in range(1, window + 1):
+                    next_idx = idx + offset
+                    if next_idx < len(lines):
+                        for source_line in (lines[next_idx], cleaned_lines[next_idx]):
+                            value = parse_preferred_int(source_line)
+                            if value is not None:
+                                return value
+
+                    prev_idx = idx - offset
+                    if prev_idx >= 0:
+                        for source_line in (lines[prev_idx], cleaned_lines[prev_idx]):
+                            value = parse_preferred_int(source_line)
+                            if value is not None:
+                                return value
+
+    return None
+
 def process_images(images):
     data = {
         "car_name": None,
@@ -258,15 +298,26 @@ def process_images(images):
         "despawn_protect": ["Despawn védelem", "Despawn vedelem", "Despawn ved."],
     }
 
+    numeric_line_variants = {
+        "tuning_points": ["Tuning pont", "Tuningpont", "Tuning", "TP"],
+        "motor_level": ["Motor szint", "Motor tuning", "Motor", "Motorszint"],
+        "transmission_level": [
+            "Váltó szint",
+            "Valto szint",
+            "Váltó",
+            "Valto",
+            "Valtoszint",
+        ],
+        "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek", "Kerekszint"],
+        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint", "Chiptuning"],
+        "steering_angle": ["Kormányzási szög", "Kormanyzasi szog", "Kormányzási", "Kormanyzasi"],
+    }
+
     for idx, img_path in enumerate(images):
         if not os.path.exists(img_path):
             continue
 
         img = Image.open(img_path)
-        width, height = img.size
-
-        crop_box = (0, 0, width, int(height * 0.8))
-        img = img.crop(crop_box)
         img = img.convert("L")
         img = ImageOps.autocontrast(img)
         img = ImageEnhance.Contrast(img).enhance(1.8)
@@ -396,6 +447,13 @@ def process_images(images):
             if drivetype_value:
                 data["drivetype"] = drivetype_value
 
+        # Extra line-based fallback for all numeric tuning stats within the current image
+        for field, variants in numeric_line_variants.items():
+            if data[field] is None:
+                value = extract_numeric_from_lines(raw_text, variants)
+                if value is not None:
+                    data[field] = value
+
     combined_text = " ".join(texts)
     raw_combined_text = "\n".join(raw_texts)
 
@@ -465,25 +523,7 @@ def process_images(images):
             if value is not None:
                 data[field] = value
 
-    textual_numeric_variants = {
-        "tuning_points": ["Tuning pont", "Tuningpont", "Tuning", "TP"],
-        "motor_level": ["Motor szint", "Motor tuning", "Motor", "Motorszint"],
-        "transmission_level": [
-            "Váltó szint",
-            "Valto szint",
-            "Váltó",
-            "Valto",
-            "Valtoszint",
-        ],
-        "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek", "Kerekszint"],
-        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint", "Chiptuning"],
-        "steering_angle": [
-            "Kormányzási szög",
-            "Kormanyzasi szog",
-            "Kormányzási",
-            "Kormanyzasi",
-        ],
-    }
+    textual_numeric_variants = numeric_line_variants
 
     for field, variants in textual_numeric_variants.items():
         if data[field] is None:
@@ -534,18 +574,17 @@ def process_images(images):
 
         return None
 
-    keyword_numeric_variants = {
-        "tuning_points": ["Tuning pont", "Tuningpont", "Tuning", "TP"],
-        "motor_level": ["Motor szint", "Motor tuning", "Motor", "Motorszint"],
-        "transmission_level": ["Váltó szint", "Valto szint", "Váltó", "Valto", "Valtoszint"],
-        "wheel_level": ["Kerék szint", "Kerek szint", "Kerék", "Kerek", "Kerekszint"],
-        "chip_level": ["Chip szint", "Chip tuning", "Chip", "Chipszint", "Chiptuning"],
-        "steering_angle": ["Kormányzási szög", "Kormanyzasi szog", "Kormányzási", "Kormanyzasi"],
-    }
+    keyword_numeric_variants = numeric_line_variants
 
     for field, variants in keyword_numeric_variants.items():
         if data[field] is None:
             value = extract_numeric_near_keyword(raw_combined_text, variants)
+            if value is not None:
+                data[field] = value
+
+    for field, variants in numeric_line_variants.items():
+        if data[field] is None:
+            value = extract_numeric_from_lines(raw_combined_text, variants)
             if value is not None:
                 data[field] = value
 
