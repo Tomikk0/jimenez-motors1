@@ -22,16 +22,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result) {
             // Biztonsági konvertálás a logikai mezőkhöz
-$boolFields = ['air_ride', 'nitro', 'dark_glass', 'drivetype', 'turbo', 'compressor', 'neon', 'colored_lights', 'despawn_protect'];
-foreach ($boolFields as $field) {
-    if (empty($result[$field])) {
-        $result[$field] = 0;
-    } else if ($result[$field] === true || strtolower($result[$field]) === "van") {
-        $result[$field] = 1;
-    } else {
-        $result[$field] = (int)$result[$field];
-    }
-}
+            $boolFields = ['air_ride', 'nitro', 'dark_glass', 'turbo', 'compressor', 'neon', 'colored_lights', 'despawn_protect'];
+            foreach ($boolFields as $field) {
+                if (!isset($result[$field]) || $result[$field] === null || $result[$field] === '') {
+                    $result[$field] = 0;
+                } elseif ($result[$field] === true || strtolower((string)$result[$field]) === "van") {
+                    $result[$field] = 1;
+                } else {
+                    $result[$field] = (int)$result[$field];
+                }
+            }
+
+            $normalizeInt = function ($value) {
+                if ($value === null || $value === '') {
+                    return 0;
+                }
+
+                if (is_numeric($value)) {
+                    return (int)$value;
+                }
+
+                $filtered = preg_replace('/[^0-9\-]/', '', (string)$value);
+                return $filtered === '' ? 0 : (int)$filtered;
+            };
+
+            $drivetypeLabel = isset($result['drivetype']) ? $result['drivetype'] : '';
+            $result['drivetype_text'] = $drivetypeLabel;
+            $result['drivetype'] = (function ($value) {
+                if ($value === null) {
+                    return 0;
+                }
+
+                if (function_exists('iconv')) {
+                    $normalized = iconv('UTF-8', 'ASCII//TRANSLIT', (string)$value);
+                    if ($normalized === false) {
+                        $normalized = (string)$value;
+                    }
+                } else {
+                    $normalized = (string)$value;
+                }
+
+                $normalized = strtolower(trim($normalized));
+
+                if ($normalized === '' || $normalized === 'nincs') {
+                    return 0;
+                }
+
+                if (preg_match('/(4x4|awd|osszkerek|all\s*wheel|mindket|mindketto|osszes)/', $normalized)) {
+                    return 3; // összkerék
+                }
+
+                if (preg_match('/(hatso|rwd|rear)/', $normalized)) {
+                    return 2; // hátsókerék
+                }
+
+                if (preg_match('/(elso|fwd|front)/', $normalized)) {
+                    return 1; // elsőkerék
+                }
+
+                if (is_numeric($normalized)) {
+                    return (int)$normalized;
+                }
+
+                return 0;
+            })($drivetypeLabel);
+
+            $intFields = ['price', 'tuning_points', 'motor_level', 'transmission_level', 'wheel_level', 'chip_level', 'steering_angle', 'drivetype'];
+            foreach ($intFields as $intField) {
+                if (isset($result[$intField])) {
+                    $result[$intField] = $normalizeInt($result[$intField]);
+                } else {
+                    $result[$intField] = 0;
+                }
+            }
             // Kapcsolódás adatbázishoz
             $conn = new mysqli("localhost", "root", "Root123", "autok");
             if ($conn->connect_error) die("DB hiba: " . $conn->connect_error);
@@ -42,7 +105,7 @@ foreach ($boolFields as $field) {
             ");
             $mainImage = basename($uploadedFiles[0]); // az első kép a fő kép
             $stmt->bind_param(
-                "sisssiiiiiiisiiiiiiis",
+                "sisssiiiiiiiiiiiiiiis",
                 $result['car_name'],
                 $result['price'],
                 $result['engine_condition'],

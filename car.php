@@ -15,6 +15,23 @@ if (!$result || $result->num_rows === 0) {
 
 $car = $result->fetch_assoc();
 $mysqli->close();
+
+function format_drive_type_label($code)
+{
+    $labels = [
+        0 => 'Nincs megadva',
+        1 => 'Elsőkerék (FWD)',
+        2 => 'Hátsókerék (RWD)',
+        3 => 'Összkerék (AWD/4x4)',
+    ];
+
+    $code = (int)$code;
+    return $labels[$code] ?? 'Ismeretlen';
+}
+
+$driveTypeCode = isset($car['drivetype']) ? (int)$car['drivetype'] : 0;
+$driveTypeLabel = format_drive_type_label($driveTypeCode);
+$hasDriveType = $driveTypeCode > 0;
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -115,7 +132,7 @@ $mysqli->close();
                 <div class="tuning-item <?= $car['dark_glass'] ? 'active' : 'inactive' ?>">🕶️ Sötétített üveg <?= $car['dark_glass'] ? 'Van' : 'Nincs' ?></div>
                 <div class="tuning-item <?= $car['neon'] ? 'active' : 'inactive' ?>">🌈 Neon <?= $car['neon'] ? 'Van' : 'Nincs' ?></div>
                 <div class="tuning-item <?= $car['colored_lights'] ? 'active' : 'inactive' ?>">💡 Színezett lámpa <?= $car['colored_lights'] ? 'Van' : 'Nincs' ?></div>
-                <div class="tuning-item <?= $car['drivetype'] ? 'active' : 'inactive' ?>">🚗 Hajtástípus <?= $car['drivetype'] ? 'Van' : 'Nincs' ?></div>
+                <div class="tuning-item <?= $hasDriveType ? 'active' : 'inactive' ?>">🚗 Hajtástípus <?= $hasDriveType ? htmlspecialchars($driveTypeLabel) : 'Nincs megadva' ?></div>
                 <div class="tuning-item <?= $car['despawn_protect'] ? 'active' : 'inactive' ?>">🛡️ Despawn védelem <?= $car['despawn_protect'] ? 'Van' : 'Nincs' ?></div>
             </div>
         </div>
