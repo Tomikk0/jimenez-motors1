@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jimenez Motors - Tuning elemzés</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <h1>Jimenez Motors</h1>
+      <p>Tuning elemzés 3 képből és jármű árlista</p>
+    </div>
+    <nav>
+      <a href="/index.html" class="active">Tuning elemzés</a>
+      <a href="/admin.html">Admin felület</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Tölts fel maximum 3 képet</h2>
+      <form id="analysis-form">
+        <div class="form-grid">
+          <label>
+            Eladó neve
+            <input type="text" name="seller" placeholder="Pl. Kovács Autóház" />
+          </label>
+          <label>
+            Ár (HUF)
+            <input type="number" name="price" placeholder="Pl. 9200000" />
+          </label>
+        </div>
+        <label class="file-field">
+          Képek (max 3)
+          <input type="file" name="images" accept="image/*" multiple required />
+        </label>
+        <button type="submit" class="primary">Elemzés indítása</button>
+      </form>
+      <div id="analysis-result" class="result hidden"></div>
+    </section>
+
+    <section class="card">
+      <h2>Hogyan működik?</h2>
+      <ul>
+        <li>Feltöltesz legfeljebb 3 képet a járműről.</li>
+        <li>A rendszer kiemeli a tuning elemeket, az eladót és az árat.</li>
+        <li>Az adatokat automatikusan MariaDB-be mentjük.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jimenez Motors - Admin</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <h1>Admin felület</h1>
+      <p>Csak admin role láthatja a jármű árlistát.</p>
+    </div>
+    <nav>
+      <a href="/index.html">Tuning elemzés</a>
+      <a href="/admin.html" class="active">Admin felület</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Bejelentkezés</h2>
+      <form id="login-form" class="form-grid">
+        <label>
+          Felhasználónév
+          <input type="text" name="username" required />
+        </label>
+        <label>
+          Jelszó
+          <input type="password" name="password" required />
+        </label>
+        <button type="submit" class="primary">Belépés</button>
+      </form>
+      <p id="login-status" class="status"></p>
+    </section>
+
+    <section class="card hidden" id="vehicle-section">
+      <div class="section-header">
+        <h2>Járművek árai</h2>
+        <button id="logout" class="ghost">Kilépés</button>
+      </div>
+      <form id="vehicle-form" class="form-grid">
+        <label>
+          Jármű neve
+          <input type="text" name="name" placeholder="Pl. BMW M3" required />
+        </label>
+        <label>
+          Ár (HUF)
+          <input type="number" name="price" placeholder="Pl. 18000000" required />
+        </label>
+        <button type="submit" class="primary">Mentés</button>
+      </form>
+      <div id="vehicle-list" class="list"></div>
+    </section>
+
+    <section class="card hidden" id="analysis-section">
+      <h2>Mentett tuning elemzések</h2>
+      <div id="analysis-list" class="list"></div>
+    </section>
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
