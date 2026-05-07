@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mazanec &amp; Jiménez Motors Inc | Jelentkezés</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body data-page="application">
+  <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Navigáció megnyitása" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="nav-overlay" id="nav-overlay" hidden></div>
+
+  <aside class="side-nav" id="side-nav" aria-hidden="true">
+    <div class="side-nav__header">
+      <img class="side-nav__logo" src="./assets/mj-logo.png" alt="Mazanec &amp; Jiménez Motors Inc logó">
+      <button class="side-nav__close" id="nav-close" type="button" aria-label="Navigáció bezárása">&times;</button>
+    </div>
+
+    <nav class="side-nav__menu" aria-label="Oldalak">
+      <a data-nav-link="home" href="/">Főoldal</a>
+      <a data-nav-link="inventory" href="/kinalat">Kínálat</a>
+      <a data-nav-link="members" href="/tagok">Tagok</a>
+      <a data-nav-link="application" href="/jelentkezes">Jelentkezés</a>
+    </nav>
+
+    <div>
+      <span class="side-nav__eyebrow">Jelentkezés</span>
+      <p class="side-nav__copy">A jelentkezés nem az oldalon, hanem közvetlenül a Discord szerveren zajlik.</p>
+    </div>
+  </aside>
+
+  <div class="page-shell">
+    <div class="topbar">
+      <div class="topbar__brand">
+        <img class="topbar__logo" src="./assets/mj-logo.png" alt="Mazanec &amp; Jiménez Motors Inc logó">
+        <div>
+          <p class="topbar__title">Mazanec &amp; Jiménez Motors Inc</p>
+          <p class="topbar__subtitle">Jelentkezés</p>
+        </div>
+      </div>
+    </div>
+
+    <main class="sections">
+      <section class="section-card">
+        <article class="application-panel">
+          <span class="section-eyebrow">Discord jelentkezés</span>
+          <h2 class="application-panel__title">Jelentkezés a szerveren</h2>
+          <p class="application-panel__text">
+            A jelentkezés a Discordon zajlik:
+            <a id="application-link-text" href="https://discord.gg/Wnz9KWz8D2" target="_blank" rel="noreferrer noopener">https://discord.gg/Wnz9KWz8D2</a>
+          </p>
+
+          <ul class="application-list">
+            <li>Lépj be a Discord szerverre.</li>
+            <li>Keresd meg a jelentkezési csatornát.</li>
+            <li>Ott tudod elküldeni a jelentkezésedet.</li>
+          </ul>
+
+          <div class="application-panel__actions">
+            <a class="button button--dark" id="application-discord-link" href="https://discord.gg/Wnz9KWz8D2" target="_blank" rel="noreferrer noopener">Tovább Discordra</a>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__top">
+        <div class="site-footer__brand">
+          <img class="site-footer__logo" src="./assets/mj-logo.png" alt="Mazanec &amp; Jiménez Motors Inc logó">
+          <div>
+            <p class="site-footer__title">Mazanec &amp; Jiménez Motors Inc</p>
+            <p class="site-footer__subtitle">Premium luxury dealership</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="site-footer__grid">
+        <article class="footer-card">
+          <div class="footer-card__headline">
+            <span class="footer-card__emoji">📍</span>
+            <p class="footer-card__label">Hely</p>
+          </div>
+          <p class="footer-card__value" id="footer-address">Lossantos 6848</p>
+        </article>
+
+        <article class="footer-card">
+          <div class="footer-card__headline">
+            <span class="footer-card__emoji">📞</span>
+            <p class="footer-card__label">Telefonszámok</p>
+          </div>
+          <div class="footer-phone-list" id="footer-phone-list"></div>
+        </article>
+
+        <article class="footer-card">
+          <div class="footer-discord-head">
+            <a class="discord-icon" id="footer-discord-link" href="#" target="_blank" rel="noreferrer noopener">
+              <img src="./assets/discord.png" alt="Discord">
+            </a>
+            <div>
+              <p class="footer-card__label">Discord</p>
+              <p class="footer-card__value"></p>
+            </div>
+          </div>
+
+          <div class="footer-actions"></div>
+        </article>
+      </div>
+    </footer>
+  </div>
+
+  <script src="./site-config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

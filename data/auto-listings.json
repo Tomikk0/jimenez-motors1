@@ -1,0 +1,208 @@
+{
+  "generated_at": "2026-05-06T16:42:45.847300+00:00",
+  "cars": [
+    {
+      "id": "1501624231086264511",
+      "vehicle_type": "Mercedes-Benz 190E",
+      "advertised_price": "$65,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501623929461145803/1501624226334117998/mta-screen_2026-05-06_18-37-16.png?ex=69fcc00a&is=69fb6e8a&hm=5908911c62bb7fd96ee18df2c3e9efc00236ce6f9ec02e8cf540ee2aaf6d1b52&",
+      "created_at": "2026-05-06T16:38:35.071000+00:00"
+    },
+    {
+      "id": "1501589480791080971",
+      "vehicle_type": "Jeep grand cheerokee",
+      "advertised_price": "$1,400,000",
+      "image_url": "https://cdn.discordapp.com/attachments/1467849581311033475/1501617572137795624/mta-screen_2026-05-06_18-10-08.png?ex=69fcb9d7&is=69fb6857&hm=76d72acc1971c30303968efbbeecdb38a055ba109f882e2efef0e6f491f0051f&",
+      "created_at": "2026-05-06T14:20:29.971000+00:00"
+    },
+    {
+      "id": "1501589282932920571",
+      "vehicle_type": "Mercedes e500",
+      "advertised_price": "$25,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501589142826520667/1501589278763913446/att.1Zsos87woybM2JbjcpMBObcYon0ruAbQYm8lYE5BHuk.jpg?ex=69fc9f7e&is=69fb4dfe&hm=21789a786b076891d6b2ef7b59f0ecd5039617e306fd1f9d6e106e139f025072&",
+      "created_at": "2026-05-06T14:19:42.750000+00:00"
+    },
+    {
+      "id": "1501589107296698489",
+      "vehicle_type": "Audi Q8",
+      "advertised_price": "$40,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501588988530786404/1501589100459851967/att.AKH3kY3wbu2GhKFBkVwcLs5H5l-iSo_Xc9AG0Msxkak.jpg?ex=69fc9f53&is=69fb4dd3&hm=330e0cbed9c5fb41bc8d4315f596864a1e189edadb5c09de197ee5f6e20cea1f&",
+      "created_at": "2026-05-06T14:19:00.756000+00:00"
+    },
+    {
+      "id": "1501588907702222848",
+      "vehicle_type": "Audi q8",
+      "advertised_price": "$22,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501588753637052436/1501588902475993158/att.-LLslV0sKpO1pnlRYFlOX9bhifUmrhLR0qmUK8YLmuQ.jpg?ex=69fc9f24&is=69fb4da4&hm=6f8e317d664865510b1dabf442fe7cb94552ece8f01d9a67d2aa4d69e2560fde&",
+      "created_at": "2026-05-06T14:18:13.350000+00:00"
+    },
+    {
+      "id": "1501588689686364170",
+      "vehicle_type": "Dodge srt demon",
+      "advertised_price": "$49,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501588499206504459/1501588683994828840/att.ssaEOgeYTpu8mMngLBfCyZyvEt4OiqF6QdA9QX6jyqI.jpg?ex=69fc9ef0&is=69fb4d70&hm=b9618097802f1413a7cf8721e05cf6b6cc6d725de255cffc9247c662c2f0fa56&",
+      "created_at": "2026-05-06T14:17:21.142000+00:00"
+    },
+    {
+      "id": "1501588488951169155",
+      "vehicle_type": "Bugatti pur sport",
+      "advertised_price": "$60,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501588365844156587/1501588481049104576/att.tyiYiPV0MZDkIipioxgwrofI05xspmgq75f_6iJgqvE.jpg?ex=69fc9ec0&is=69fb4d40&hm=d25c28c241e3aa8ea4066589afff08a1d0cc3d3cf1a9e7fbe705ceb75fb63417&",
+      "created_at": "2026-05-06T14:16:32.588000+00:00"
+    },
+    {
+      "id": "1501588339503927306",
+      "vehicle_type": "Mercedes w212",
+      "advertised_price": "$40,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501588106837626964/1501588334504448111/att.7PEko7YFQzrS7RF0hbpjrXxnaC-l2CGOQI2nrBV7vSM.jpg?ex=69fc9e9d&is=69fb4d1d&hm=0716b7db426054eb7e1401c93ccc6f656cad9f8413090b6d337ee9fb5492e513&",
+      "created_at": "2026-05-06T14:15:57.804000+00:00"
+    },
+    {
+      "id": "1501588099304521748",
+      "vehicle_type": "Mercedes benz e190",
+      "advertised_price": "$50,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501587662044401785/1501588093243883602/att.0yY-gfA-9OrLTAoCEQ0BHCQznf_sxrvrHNedPLXuSV0.jpg?ex=69fc9e63&is=69fb4ce3&hm=98779afec51b3df31a6e818083b12b88039c8636f8a75ab476dc9d2e3204920d&",
+      "created_at": "2026-05-06T14:15:00.490000+00:00"
+    },
+    {
+      "id": "1501587813160976394",
+      "vehicle_type": "Nissan Skyline R34",
+      "advertised_price": "$95,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501587542443823214/1501587807473369198/Kepernyokep_2026-05-06_161220.png?ex=69fc9e1f&is=69fb4c9f&hm=02777fb15938ef067f3fee2c801f25d6487bea9da6c62ac67faf1489da5840b5&",
+      "created_at": "2026-05-06T14:13:52.383000+00:00"
+    },
+    {
+      "id": "1501575069187571732",
+      "vehicle_type": "Brabus 900 GLS",
+      "advertised_price": "$140,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501574913947992185/1501575064003412048/mta-screen_2026-05-06_15-00-51.png?ex=69fc9241&is=69fb40c1&hm=b2ce569bc2a47ca51c6c9d99c03cba855451ae9db891b6b87db821ff3be3bc67&",
+      "created_at": "2026-05-06T13:23:13.822000+00:00"
+    },
+    {
+      "id": "1501568896241631366",
+      "vehicle_type": "Dodge Ram 2017",
+      "advertised_price": "$37,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501568710438031420/1501568883121983538/mta-screen_2026-05-06_14-56-35.png?ex=69fc8c7f&is=69fb3aff&hm=3455a24aad6c672e8ce0836c1932a18de672e9b47c5aba18087471a79e6c8c9c&",
+      "created_at": "2026-05-06T12:58:41.962000+00:00"
+    },
+    {
+      "id": "1501286265306222606",
+      "vehicle_type": "Rolls Royce Cullinan '18",
+      "advertised_price": "$160,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501285931930489093/1501286259694375032/mta-screen_2026-05-05_20-14-26.png?ex=69fb8548&is=69fa33c8&hm=69d12c2e9a5a3ef832f1d9bf537e7cefc485accfdde2bd166f5722d107054e0f&",
+      "created_at": "2026-05-05T18:15:37.866000+00:00"
+    },
+    {
+      "id": "1501266727197999214",
+      "vehicle_type": "Ferrari FXX-K",
+      "advertised_price": "$334,990,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501266551720902826/1501266722739716196/mta-screen_2026-05-05_18-53-15.png?ex=69fb7316&is=69fa2196&hm=b0a05787eb13a972fc63a5b3b57be562954df8656e1b3e88ff757f0b01264eb4&",
+      "created_at": "2026-05-05T16:57:59.527000+00:00"
+    },
+    {
+      "id": "1501266168759980184",
+      "vehicle_type": "Jesko",
+      "advertised_price": "$359,990,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1501265576205615306/1501266163563233320/mta-screen_2026-05-05_18-52-35.png?ex=69fb7291&is=69fa2111&hm=e274a24c6625bff867058e8b4f01ee646beba9f78de372bfd1a3d750e0fd24b7&",
+      "created_at": "2026-05-05T16:55:46.346000+00:00"
+    },
+    {
+      "id": "1500959228355940455",
+      "vehicle_type": "VW Golf 7 GTI",
+      "advertised_price": "$26,000,000",
+      "image_url": "https://cdn.discordapp.com/attachments/620319631411904539/1501615305418608750/mta-screen_2026-05-06_17-43-48.png?ex=69fcb7bb&is=69fb663b&hm=8ff65ccc45b50f2a14e5ef83b3b25174666d6ecc7b67956d027878350599ef0e&",
+      "created_at": "2026-05-04T20:36:06.053000+00:00"
+    },
+    {
+      "id": "1500805664916901972",
+      "vehicle_type": "Brabus G63",
+      "advertised_price": "$100,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1500805482846224444/1500805660227538964/att.Ne5SF-vPqei01hwvvvRCWMMhauuz6SdHt2Dnrjde5xU.jpg?ex=69fb1731&is=69f9c5b1&hm=347fdb67d3b86699c0252f8965abf681a10c014df932e4e3e6cddc426afed471&",
+      "created_at": "2026-05-04T10:25:53.653000+00:00"
+    },
+    {
+      "id": "1500141854618816746",
+      "vehicle_type": "Audi Q8",
+      "advertised_price": "$20,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1500141735651840061/1500141849741099008/mta-screen_2026-05-02_16-26-57.png?ex=69fb4ff8&is=69f9fe78&hm=00548baa042556db88d57ac6205d0574343f63a7cece3bc680a53c416d96d945&",
+      "created_at": "2026-05-02T14:28:08.948000+00:00"
+    },
+    {
+      "id": "1499847643994652692",
+      "vehicle_type": "Porsche 911 Turbo S (2014)",
+      "advertised_price": "$70,000,000",
+      "image_url": "https://cdn.discordapp.com/attachments/1467849581311033475/1501616746707288135/mta-screen_2026-05-06_18-08-24.png?ex=69fcb913&is=69fb6793&hm=dbaedf991ca81648f1d955892b491c88060012e04b40c0cf5ecc9dbcbaab4049&",
+      "created_at": "2026-05-01T18:59:03.736000+00:00"
+    },
+    {
+      "id": "1499847464386297986",
+      "vehicle_type": "Mercedes Maybach S600",
+      "advertised_price": "$90,000,000",
+      "image_url": "https://cdn.discordapp.com/attachments/1467849581311033475/1501616745847459961/mta-screen_2026-05-06_18-08-27.png?ex=69fcb912&is=69fb6792&hm=2b575039a8573b299529c382ca0e1299d04bf064e4733f323e9dcdfd261fb368&",
+      "created_at": "2026-05-01T18:58:20.799000+00:00"
+    },
+    {
+      "id": "1499847294487363806",
+      "vehicle_type": "Mclaren P1",
+      "advertised_price": "$110,000,000",
+      "image_url": "https://cdn.discordapp.com/attachments/620319631411904539/1501616465001054349/mta-screen_2026-05-06_18-07-28.png?ex=69fcb8cf&is=69fb674f&hm=2ac216faa01214b7e8257d1ea4527c5c146c518b8b37b83eb0d5d92b5dbf76a0&",
+      "created_at": "2026-05-01T18:57:40.358000+00:00"
+    },
+    {
+      "id": "1498444087773364326",
+      "vehicle_type": "Pagani Hueyra",
+      "advertised_price": "$160,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1498443782230773830/1498444083541180476/att.WyPdCwOLVXOIX__9VntQrKW79NPcqV9WiuguciE84v8.jpg?ex=69fb118d&is=69f9c00d&hm=3469a10da87af5cc6d3af5369afb38b2a92ff624faeaa241e483b5ded1d78f77&",
+      "created_at": "2026-04-27T22:01:49.818000+00:00"
+    },
+    {
+      "id": "1497326045408530432",
+      "vehicle_type": "Merci w212",
+      "advertised_price": "$40,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1497325840038625362/1497326040945786880/merci.png?ex=69fb9d8b&is=69fa4c0b&hm=1166267e5685825b8914087e16233e3f4d2d76195bf10ca606a796e381f2cb76&",
+      "created_at": "2026-04-24T19:59:07.717000+00:00"
+    },
+    {
+      "id": "1497318021562241106",
+      "vehicle_type": "BMW m5 e60",
+      "advertised_price": "$30,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1497317865198588114/1497318015967170730/m5e60.png?ex=69fb9611&is=69fa4491&hm=28821d2bc9f5180e9fd78f5fda0cdac36c6ba7a9432138ba739236db5bbafcaa&",
+      "created_at": "2026-04-24T19:27:14.614000+00:00"
+    },
+    {
+      "id": "1497317843698585632",
+      "vehicle_type": "Brabus 800 s63",
+      "advertised_price": "$135,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1497317630426611803/1497317838006779944/brabus_800.png?ex=69fb95e7&is=69fa4467&hm=18a4b08e1337a95dde4e1eaff1c2456d3cc28cf567ca459ee0a669134d46f4f7&",
+      "created_at": "2026-04-24T19:26:32.311000+00:00"
+    },
+    {
+      "id": "1497317622545387540",
+      "vehicle_type": "Maseratti Gran",
+      "advertised_price": "$90,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1497317443507322990/1497317617164357783/maseratti.png?ex=69fb95b2&is=69fa4432&hm=b7711a6f93a4f39c5bdcc8ad5d7a018d4661edb7728ce512a53daeac566960b1&",
+      "created_at": "2026-04-24T19:25:39.449000+00:00"
+    },
+    {
+      "id": "1497317427829280939",
+      "vehicle_type": "McLaren 720",
+      "advertised_price": "$88,000,000",
+      "image_url": "https://cdn.discordapp.com/ephemeral-attachments/1497317219892461578/1497317421956988998/mclaren.png?ex=69fb9584&is=69fa4404&hm=5d57221118a93647f51bd18392ec779477b30c61de5a497b9e88740909cb3876&",
+      "created_at": "2026-04-24T19:24:53.147000+00:00"
+    },
+    {
+      "id": "1497242456884903956",
+      "vehicle_type": "Koenigsegg Agera R",
+      "advertised_price": "$45,000,000",
+      "image_url": "https://cdn.discordapp.com/attachments/620319631411904539/1501615303954665582/mta-screen_2026-05-06_17-38-29.png?ex=69fcb7bb&is=69fb663b&hm=19326ba07b5e70f390e8987dbc53d8d97f868fcc68642d735a4668e32e42806a&",
+      "created_at": "2026-04-24T14:26:58.651000+00:00"
+    },
+    {
+      "id": "1497204086502588507",
+      "vehicle_type": "Mercedes G63 AMG",
+      "advertised_price": "$42,990,000",
+      "image_url": "https://cdn.discordapp.com/attachments/620319631411904539/1501615303417925662/mta-screen_2026-05-06_17-38-08.png?ex=69fcb7ba&is=69fb663a&hm=5a1e10756b299fec73b5c33b4fcd899ed57982cfb7afafda4281ba265d0cc85a&",
+      "created_at": "2026-04-24T11:54:30.442000+00:00"
+    }
+  ]
+}

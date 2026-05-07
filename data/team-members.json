@@ -1,0 +1,89 @@
+{
+  "generated_at": "2026-05-06T16:40:34.056727+00:00",
+  "guild_id": 1429564175545274391,
+  "ranks": [
+    {
+      "name": "Tulajdonos",
+      "role_id": 1429576436867661925,
+      "members": [
+        { "id": 474970905555238925, "name": "Diego Terrance Jiménez" },
+        { "id": 1006253536331432060, "name": "Juan Carlos Santiago" },
+        { "id": 259654575785508864, "name": "Juan David Jiménez" }
+      ]
+    },
+    {
+      "name": "Tulajhelyettes",
+      "role_id": 1429576636407218227,
+      "members": [
+        { "id": 1294275068049756224, "name": "Kawata Kin" },
+        { "id": 746325546555932743, "name": "Paula Jiménez" }
+      ]
+    },
+    {
+      "name": "Manager",
+      "role_id": 1429576924812017805,
+      "members": [
+        { "id": 723530441348612136, "name": "Javier Lopez" },
+        { "id": 689535897347293310, "name": "Juan Jorge Fernandez" }
+      ]
+    },
+    {
+      "name": "Csoportvezető",
+      "role_id": 1429577075349655733,
+      "members": [
+        { "id": 823933917852729405, "name": "Yeo Tae" }
+      ]
+    },
+    {
+      "name": "Üzlet Koordinátor",
+      "role_id": 1448824514548076577,
+      "members": [
+        { "id": 351474333274734602, "name": "Ruby Torres" }
+      ]
+    },
+    {
+      "name": "Értékesítési Vezető",
+      "role_id": 1429577133562265690,
+      "members": [
+        { "id": 662592509742153748, "name": "Julio Charo" },
+        { "id": 823167363943497748, "name": "Luis Herrera Salgado" }
+      ]
+    },
+    {
+      "name": "Profi Értékesítő",
+      "role_id": 1429577228425101383,
+      "members": [
+        { "id": 698205722541817896, "name": "Bruno Gomez" },
+        { "id": 1132332198465388545, "name": "Dante De Navarro" },
+        { "id": 895319072462479381, "name": "Javier Lucaro" },
+        { "id": 443114112776405015, "name": "John Russell" },
+        { "id": 1182082493826990132, "name": "Ramiro Mendoza" },
+        { "id": 1321910050834616435, "name": "Severiano Osvaldo" }
+      ]
+    },
+    {
+      "name": "Sr. Értékesítő",
+      "role_id": 1429577339397865573,
+      "members": [
+        { "id": 1124608016017281074, "name": "Carlos Cueva" },
+        { "id": 407303764098285581, "name": "Cole Brown" },
+        { "id": 1178112321780973681, "name": "Matias Alvarez" },
+        { "id": 437506266592575490, "name": "Sergio Caballero" },
+        { "id": 279632550757138432, "name": "Thomas Gomez" }
+      ]
+    },
+    {
+      "name": "Jr. Értékesítő",
+      "role_id": 1429577798758170694,
+      "members": [
+        { "id": 1266205415893631088, "name": "Camila Navarro" },
+        { "id": 1449275933281222656, "name": "Luciana Velasco" }
+      ]
+    },
+    {
+      "name": "Vontatós (Inaktív)",
+      "role_id": 1429577909529739325,
+      "members": []
+    }
+  ]
+}
